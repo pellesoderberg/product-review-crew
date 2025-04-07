@@ -81,7 +81,9 @@ export default function SearchBar() {
   };
 
   const handleSuggestionClick = (suggestion: Suggestion) => {
-    setQuery(suggestion.text);
+    // Clear the search input before navigation
+    setQuery('');
+    setSuggestions([]);
     setShowSuggestions(false);
     
     if (suggestion.type === 'REVIEW') {
