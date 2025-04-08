@@ -2,61 +2,84 @@ import Image from "next/image";
 import Link from 'next/link';
 import SearchBar from '@/components/SearchBar/SearchBar';
 import styles from './page.module.css';
+import heroStyles from './hero.module.css';
 import { connectToDatabase } from '@/lib/mongodb';
 
-// Make the component async to fetch data
 export default async function Home() {
-  // Fetch the first product from the database
-  let imagePath = '/images/default-product.jpg';
-  let productName = 'Featured Product';
+  const featuredProduct = await getFeaturedProduct();
+  const featuredReview = featuredProduct ? await getReviewForProduct(featuredProduct.category) : null;
   
-  try {
-    const { db } = await connectToDatabase();
-    // Fix: Use the correct collection name for MongoDB
-    const firstProduct = await db.collection('product_reviews').findOne(
-      {}, // empty filter to get any product
-      { sort: { createdAt: -1 } } // sort by creation date, newest first
-    );
-
-    console.log('Found product:', firstProduct ? firstProduct.productName : 'None');
-    
-    if (firstProduct && firstProduct.image) {
-      imagePath = firstProduct.image;
-      productName = firstProduct.productName || 'Featured Product';
-    } else {
-      console.log('No product image found, using default');
-    }
-  } catch (error) {
-    console.error('Error fetching product image:', error);
-  }
-
   return (
-    <main className={styles.main}>
-      <div className={styles.heroSection}>
-        <div className={styles.heroContent}>
-          <div className={styles.reviewHeading}>
-            <h1>NEW REVIEW</h1>
-            <p>
-              WE'VE SET BOLD AND AMBITIOUS TARGETS FOR 2025 
-              AGAINST OUR FOCUS AREAS OS PEOPLE, PLANET AND PLAY. 
-              LEARN MORE ABOUT OUR JOURNEY TO A BETTER FUTURE
-            </p>
-            <Link href="/review/latest" className={styles.showReviewButton}>
+    <main>
+      {/* Hero section with featured product */}
+      <section className={heroStyles.heroSection}>
+        <div className={heroStyles.heroContent}>
+          <h1 className={heroStyles.heroTitle}>
+            {featuredProduct?.productName || "NEW REVIEW"}
+          </h1>
+          <p className={heroStyles.heroText}>
+            {featuredProduct?.shortSummary || "WE'VE SET BOLD AND AMBITIOUS TARGETS FOR 2025 AGAINST OUR FOCUS AREAS OS PEOPLE, PLANET AND PLAY. LEARN MORE ABOUT OUR JOURNEY TO A BETTER FUTURE"}
+          </p>
+          {/* Add product ID to the URL for automatic scrolling */}
+          <Link href={featuredReview && featuredProduct 
+            ? `/review/${featuredReview.slug || featuredReview._id}#product-${featuredProduct._id}` 
+            : "/search"}>
+            <button className={heroStyles.heroButton}>
               SHOW REVIEW
-            </Link>
-          </div>
+            </button>
+          </Link>
         </div>
-        <div className={styles.heroImage}>
-          <Image 
-            src={imagePath}
-            alt={productName}
-            width={500} 
-            height={400}
-            priority
-            unoptimized={true} // Add this to handle external URLs
-          />
+        <div className={heroStyles.heroImage}>
+          {featuredProduct?.image ? (
+            <img 
+              src={featuredProduct.image} 
+              alt={featuredProduct.productName} 
+              className="max-w-full h-auto"
+            />
+          ) : (
+            <div className="bg-gray-200 w-full h-[400px] flex items-center justify-center">
+              <span className="text-gray-500">Product image</span>
+            </div>
+          )}
         </div>
-      </div>
+      </section>
+      
+      {/* Rest of your homepage content */}
     </main>
   );
+}
+
+// Helper function to get a featured product
+async function getFeaturedProduct() {
+  try {
+    const { db } = await connectToDatabase();
+    
+    // Get a random featured product or the most recent one
+    const product = await db.collection('product_reviews')
+      .findOne(
+        { image: { $exists: true, $ne: "" } }, // Make sure it has an image
+        { sort: { createdAt: -1 } } // Get the most recent
+      );
+    
+    return product;
+  } catch (error) {
+    console.error('Error fetching featured product:', error);
+    return null;
+  }
+}
+
+// Helper function to get a review for a product category
+async function getReviewForProduct(category: string) {
+  try {
+    const { db } = await connectToDatabase();
+    
+    // Find a review in the same category as the product
+    const review = await db.collection('comparison_reviews')
+      .findOne({ category: category });
+    
+    return review;
+  } catch (error) {
+    console.error('Error fetching review for product:', error);
+    return null;
+  }
 }

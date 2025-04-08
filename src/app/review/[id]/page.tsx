@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link'; // Add this import
 import { connectToDatabase } from '@/lib/mongodb';
 import { ObjectId } from 'mongodb';
 import styles from './review.module.css';
@@ -78,8 +79,13 @@ export default async function ReviewPage({ params }: ReviewPageParams) {
     return <div className={styles.container}>Review not found</div>;
   }
   
-  // Rest of your component remains the same
   const { review, products } = data;
+  
+  // Fetch related reviews in the same category
+  const relatedReviews = await getRelatedReviews(review.category, review._id.toString());
+  
+  // Fetch latest reviews from different categories
+  const latestReviews = await getLatestReviews(review.category);
   
   // Define award types and colors for the top 3 products
   const awards = ["BEST OVERALL", "BEST AFFORDABLE", "BEST PREMIUM"];
@@ -143,7 +149,12 @@ export default async function ReviewPage({ params }: ReviewPageParams) {
       
       <section className={styles.detailedReview}>
         {products.map((product: any, index: number) => (
-          <div key={product._id} className={styles.productDetail}>
+          // In the product detail section, add an ID to each product element
+          <div 
+            key={product._id} 
+            className={styles.productDetail}
+            id={`product-${product._id}`} // Add this ID for scrolling
+          >
             <h2 className={styles.productDetailTitle}>
               {index + 1}. {product.productName} - {product.award || awards[index] || "BEST CHOICE"}
             </h2>
@@ -184,8 +195,105 @@ export default async function ReviewPage({ params }: ReviewPageParams) {
           </div>
         ))}
       </section>
+      
+      {/* New section for related and latest reviews */}
+      <div className={styles.relatedReviewsContainer}>
+        <div className={styles.relatedReviewsSection}>
+          <h2 className={styles.relatedReviewsTitle}>OTHER REVIEWS IN {review.category.toUpperCase()}</h2>
+          <ul className={styles.relatedReviewsList}>
+            {relatedReviews.length > 0 ? (
+              relatedReviews.map((relatedReview) => (
+                <li key={relatedReview._id.toString()} className={styles.relatedReviewItem}>
+                  <Link href={`/review/${relatedReview.slug || relatedReview._id}`} className={styles.relatedReviewLink}>
+                    {relatedReview.reviewTitle}
+                  </Link>
+                </li>
+              ))
+            ) : (
+              <li className={styles.relatedReviewItem}>No other reviews in this category yet</li>
+            )}
+          </ul>
+        </div>
+        
+        <div className={styles.latestReviewsSection}>
+          <h2 className={styles.latestReviewsTitle}>LATEST REVIEWS</h2>
+          <ul className={styles.latestReviewsList}>
+            {latestReviews.length > 0 ? (
+              latestReviews.map((latestReview) => (
+                <li key={latestReview._id.toString()} className={styles.latestReviewItem}>
+                  <Link href={`/review/${latestReview.slug || latestReview._id}`} className={styles.latestReviewLink}>
+                    {latestReview.reviewTitle}
+                  </Link>
+                </li>
+              ))
+            ) : (
+              <li className={styles.latestReviewItem}>No other reviews available yet</li>
+            )}
+          </ul>
+        </div>
+      </div>
+      
+      {/* Remove the client-side script for scrolling */}
     </div>
   );
+}
+
+// Helper function to get related reviews in the same category
+async function getRelatedReviews(category: string, currentReviewId: string, limit = 3) {
+  try {
+    const { db } = await connectToDatabase();
+    
+    console.log(`Fetching related reviews for category: ${category}, excluding review: ${currentReviewId}`);
+    
+    const relatedReviews = await db.collection('comparison_reviews')
+      .find({ 
+        category: category,
+        _id: { $ne: new ObjectId(currentReviewId) }
+      })
+      .limit(limit)
+      .toArray();
+      
+    console.log(`Found ${relatedReviews.length} related reviews`);
+    
+    // Log the titles to debug
+    relatedReviews.forEach((review, index) => {
+      console.log(`Related review ${index + 1}: ${review.reviewTitle}`);
+    });
+    
+    return relatedReviews;
+  } catch (error) {
+    console.error('Error fetching related reviews:', error);
+    return [];
+  }
+}
+
+// Helper function to get latest reviews from different categories
+async function getLatestReviews(excludeCategory: string, limit = 3) {
+  try {
+    const { db } = await connectToDatabase();
+    
+    console.log(`Fetching latest reviews excluding category: ${excludeCategory}`);
+    
+    const latestReviews = await db.collection('comparison_reviews')
+      .find({ 
+        category: { $ne: excludeCategory }
+      })
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .toArray();
+      
+    console.log(`Found ${latestReviews.length} latest reviews`);
+    
+    // Log the titles to debug
+    latestReviews.forEach((review, index) => {
+      console.log(`Latest review ${index + 1}: ${review.reviewTitle}`);
+    });
+    
+    return latestReviews;
+  } catch (error) {
+    console.error('Error fetching latest reviews:', error);
+    return [];
+  }
 }
 
 // Helper function to format review text with exactly three paragraphs

@@ -148,30 +148,52 @@ export default function SearchBar() {
       {showSuggestions && suggestions.length > 0 && (
         <div className={styles.suggestions}>
           {suggestions.map((item, index) => {
-            // Determine the link URL based on item type
-            // For products, we need to find the review that contains this product
-            const linkUrl = item._id 
-              ? (item.type === 'review' 
-                ? `/review/${item._id}` 
-                : `/search?q=${encodeURIComponent(item.title)}`)
-              : '/search?q=' + encodeURIComponent(query);
-              
-            // Use the title for display
-            const displayText = item.title || query;
-            
             return (
-              <Link 
-                href={linkUrl}
+              <div 
                 key={index}
                 className={styles.suggestionItem}
-                onClick={() => {
+                onClick={async () => {
                   setShowSuggestions(false);
                   setQuery(''); // Clear the search text when clicking a suggestion
+                  
+                  // Handle different types of suggestions
+                  if (item.type === 'product') {
+                    try {
+                      // First, find the review that contains this product
+                      const response = await fetch(`/api/redirect-to-review?productId=${item._id}`);
+                      
+                      if (response.ok) {
+                        // Get the URL from the response
+                        const url = response.url;
+                        
+                        // Check if we got redirected to a review page
+                        if (url.includes('/review/')) {
+                          // Extract the review ID/slug from the URL
+                          const reviewPath = url.split('/review/')[1].split('#')[0];
+                          
+                          // Manually construct the URL with the hash
+                          router.push(`/review/${reviewPath}#product-${item._id}`);
+                        } else {
+                          // If not redirected to a review, just follow the redirect
+                          window.location.href = url;
+                        }
+                      } else {
+                        // Fallback to search page
+                        router.push(`/search?q=${encodeURIComponent(item.title)}`);
+                      }
+                    } catch (error) {
+                      // Fallback to search
+                      router.push(`/search?q=${encodeURIComponent(item.title)}`);
+                    }
+                  } else {
+                    // For reviews, navigate directly to the review page
+                    router.push(`/review/${item._id}`);
+                  }
                 }}
               >
-                <span>{displayText}</span>
+                <span>{item.title || query}</span>
                 <span className={styles.suggestionType}>{item.type}</span>
-              </Link>
+              </div>
             );
           })}
         </div>

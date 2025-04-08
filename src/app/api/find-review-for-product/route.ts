@@ -7,15 +7,14 @@ export async function GET(request: NextRequest) {
   const productId = searchParams.get('productId');
   
   if (!productId) {
-    console.log("No productId provided");
-    return NextResponse.redirect(new URL('/search', request.url));
+    return NextResponse.json({ error: 'Product ID is required' }, { status: 400 });
   }
   
   try {
     // Connect to MongoDB
     const { db } = await connectToDatabase();
     
-    console.log("Looking for review containing product:", productId);
+    console.log("Finding review for product:", productId);
     
     // Get the product details first
     let product;
@@ -23,12 +22,11 @@ export async function GET(request: NextRequest) {
       product = await db.collection('product_reviews').findOne({
         _id: new ObjectId(productId)
       });
-      console.log("Looking up product by ObjectId:", productId);
     }
     
     if (!product) {
       console.log("Product not found with ID:", productId);
-      return NextResponse.redirect(new URL(`/search?q=${encodeURIComponent(productId)}`, request.url));
+      return NextResponse.json({ error: 'Product not found' }, { status: 404 });
     }
     
     console.log("Found product:", product.productName, "Category:", product.category);
@@ -41,22 +39,17 @@ export async function GET(request: NextRequest) {
     if (review) {
       console.log("Found review in category:", review.reviewTitle, "Slug:", review.slug);
       
-      // Use the slug for SEO-friendly URLs if available
-      const reviewPath = review.slug 
-        ? `/review/${review.slug}` 
-        : `/review/${review._id}`;
-        
-      // Fix: Remove the space between hash and productId
-      console.log("Redirecting to:", reviewPath, "with hash #product-" + productId);
-      
-      // Fix: Ensure there's no space in the URL hash
-      return NextResponse.redirect(new URL(`${reviewPath}#product-${productId.trim()}`, request.url));
+      // Return the review slug or ID
+      return NextResponse.json({ 
+        reviewSlug: review.slug || review._id.toString(),
+        reviewTitle: review.reviewTitle
+      });
     } else {
       console.log("No review found for product category:", product.category);
-      return NextResponse.redirect(new URL(`/search?q=${encodeURIComponent(product.productName)}`, request.url));
+      return NextResponse.json({ error: 'No review found for this product' }, { status: 404 });
     }
   } catch (error) {
-    console.error('Error redirecting to review:', error);
-    return NextResponse.redirect(new URL('/search', request.url));
+    console.error('Error finding review for product:', error);
+    return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 }
