@@ -337,6 +337,65 @@
   margin-bottom: 0.5rem;
 }
 
+.comparisonText {
+  margin: 2rem 0 4rem;
+  line-height: 1.8;
+  font-size: 1.05rem;
+  color: #333;
+}
+
+.comparisonText p {
+  margin-bottom: 1.5rem;
+  text-indent: 0;
+  padding-left: 0;
+  margin-left: 0;
+}
+
+.productReviewText p {
+  margin-bottom: 1.5rem;
+  text-indent: 0;
+  padding-left: 0;
+  margin-left: 0;
+}
+
+.productReviewText p:last-child {
+  margin-bottom: 0;
+}
+
+.sectionTitle {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 2rem 0 1.5rem;
+  text-transform: uppercase;
+  color: #444;
+}
+
+.comparisonText ul, 
+.comparisonText ol {
+  margin-bottom: 1.5rem;
+  padding-left: 2rem;
+}
+
+.comparisonText li {
+  margin-bottom: 0.5rem;
+}
+
+.comparisonText h3, 
+.comparisonText h4 {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.comparisonText a {
+  color: #1a73e8;
+  text-decoration: underline;
+}
+
+.comparisonText a:hover {
+  text-decoration: none;
+}
+
 @media (max-width: 900px) {
   .productsGrid {
     grid-template-columns: repeat(2, 1fr);

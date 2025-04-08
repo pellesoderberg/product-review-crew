@@ -49,11 +49,14 @@
   background-color: #333;
 }
 
+/* Assuming there's a hero or banner section with an image */
 .heroImage {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  margin-top: 2rem; /* Increase this value to move the image down */
+}
+
+/* If the image is in a container */
+.imageContainer {
+  padding-top: 2rem; /* Add padding to move the image down */
 }
 
 @media (max-width: 768px) {

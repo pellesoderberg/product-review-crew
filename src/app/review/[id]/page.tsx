@@ -2,10 +2,13 @@ import Image from 'next/image';
 import { connectToDatabase } from '@/lib/mongodb';
 import { ObjectId } from 'mongodb';
 import styles from './review.module.css';
+import { redirect } from 'next/navigation';
 
 // Define the params type
 type ReviewPageParams = {
-  params: {
+  params: Promise<{
+    id: string;
+  }> | {
     id: string;
   };
 };
@@ -14,11 +17,21 @@ async function getReviewData(id: string) {
   const { db } = await connectToDatabase();
   
   try {
-    // Convert string ID to MongoDB ObjectId
-    const objectId = new ObjectId(id);
+    let review;
     
-    // Fetch the review
-    const review = await db.collection('comparison_reviews').findOne({ _id: objectId });
+    // First, try to find by slug
+    review = await db.collection('comparison_reviews').findOne({ slug: id });
+    
+    // If not found by slug, try to find by ObjectId
+    if (!review && ObjectId.isValid(id)) {
+      const objectId = new ObjectId(id);
+      review = await db.collection('comparison_reviews').findOne({ _id: objectId });
+      
+      // If found by ID but has a slug, redirect to the slug URL for SEO
+      if (review && review.slug) {
+        return { redirect: `/review/${review.slug}` };
+      }
+    }
     
     if (!review) {
       return null;
@@ -50,22 +63,16 @@ async function getReviewData(id: string) {
   }
 }
 
-// Make sure to properly type the params and use async
-// Update the params type to use Promise
-type ReviewPageParams = {
-  params: Promise<{
-    id: string;
-  }> | {
-    id: string;
-  };
-};
-
-// Update the ReviewPage function to properly await params
 export default async function ReviewPage({ params }: ReviewPageParams) {
   // Await params if it's a Promise
   const resolvedParams = 'then' in params ? await params : params;
   const id = resolvedParams?.id || '';
   const data = await getReviewData(id);
+  
+  // Handle redirects for SEO
+  if (data && 'redirect' in data) {
+    redirect(data.redirect);
+  }
   
   if (!data) {
     return <div className={styles.container}>Review not found</div>;
@@ -120,6 +127,20 @@ export default async function ReviewPage({ params }: ReviewPageParams) {
         ))}
       </section>
       
+      {/* Add comparison review section */}
+      {review.comparisonReview && (
+        <div className={styles.comparisonText}>
+          <h2 className={styles.sectionTitle}>REVIEW</h2>
+          {typeof review.comparisonReview === 'string' ? (
+            <div dangerouslySetInnerHTML={{ 
+              __html: formatReviewText(review.comparisonReview) 
+            }} />
+          ) : (
+            <div dangerouslySetInnerHTML={{ __html: review.comparisonReview }} />
+          )}
+        </div>
+      )}
+      
       <section className={styles.detailedReview}>
         {products.map((product: any, index: number) => (
           <div key={product._id} className={styles.productDetail}>
@@ -148,38 +169,16 @@ export default async function ReviewPage({ params }: ReviewPageParams) {
               </div>
               <div className={styles.productDetailText}>
                 <div className={styles.productReviewText}>
-                  <p>{product.review || product.shortSummary}</p>
+                  {typeof product.review === 'string' ? (
+                    <div dangerouslySetInnerHTML={{ 
+                      __html: formatProductReviewText(product.review || product.shortSummary) 
+                    }} />
+                  ) : (
+                    <p>{product.review || product.shortSummary}</p>
+                  )}
                 </div>
                 
-                {(product.pros?.length > 0 || product.cons?.length > 0) && (
-                  <div className={styles.productFeatures}>
-                    {product.pros && product.pros.length > 0 && (
-                      <div className={styles.featureSection}>
-                        <ul className={styles.prosList}>
-                          {product.pros.map((pro: string, i: number) => (
-                            <li key={i}>
-                              <span className={`${styles.featureIcon} ${styles.proIcon}`}>+</span>
-                              <span>{pro}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                    
-                    {product.cons && product.cons.length > 0 && (
-                      <div className={styles.featureSection}>
-                        <ul className={styles.consList}>
-                          {product.cons.map((con: string, i: number) => (
-                            <li key={i}>
-                              <span className={`${styles.featureIcon} ${styles.conIcon}`}>−</span>
-                              <span>{con}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </div>
-                )}
+                {/* Pros and cons box removed */}
               </div>
             </div>
           </div>
@@ -187,4 +186,63 @@ export default async function ReviewPage({ params }: ReviewPageParams) {
       </section>
     </div>
   );
+}
+
+// Helper function to format review text with exactly three paragraphs
+function formatReviewText(text: string): string {
+  // If text already has paragraph tags, return as is
+  if (text.includes('<p>')) {
+    return text;
+  }
+  
+  // Remove any existing HTML tags for safety
+  const cleanText = text.replace(/<[^>]*>/g, '');
+  
+  // Split the text into roughly three equal parts
+  const totalLength = cleanText.length;
+  const partLength = Math.floor(totalLength / 3);
+  
+  // Find sentence boundaries near the split points
+  let firstBreak = cleanText.indexOf('. ', partLength);
+  if (firstBreak === -1) firstBreak = partLength;
+  else firstBreak += 2; // Include the period and space
+  
+  let secondBreak = cleanText.indexOf('. ', partLength * 2);
+  if (secondBreak === -1) secondBreak = partLength * 2;
+  else secondBreak += 2; // Include the period and space
+  
+  // Create the three paragraphs
+  const firstParagraph = cleanText.substring(0, firstBreak);
+  const secondParagraph = cleanText.substring(firstBreak, secondBreak);
+  const thirdParagraph = cleanText.substring(secondBreak);
+  
+  // Wrap in paragraph tags
+  return `<p>${firstParagraph.trim()}</p><p>${secondParagraph.trim()}</p><p>${thirdParagraph.trim()}</p>`;
+}
+
+// Helper function to format product review text into two paragraphs
+function formatProductReviewText(text: string): string {
+  // If text already has paragraph tags, return as is
+  if (text.includes('<p>')) {
+    return text;
+  }
+  
+  // Remove any existing HTML tags for safety
+  const cleanText = text.replace(/<[^>]*>/g, '');
+  
+  // Split the text into two roughly equal parts
+  const totalLength = cleanText.length;
+  const halfLength = Math.floor(totalLength / 2);
+  
+  // Find sentence boundary near the middle
+  let breakPoint = cleanText.indexOf('. ', halfLength);
+  if (breakPoint === -1) breakPoint = halfLength;
+  else breakPoint += 2; // Include the period and space
+  
+  // Create the two paragraphs
+  const firstParagraph = cleanText.substring(0, breakPoint);
+  const secondParagraph = cleanText.substring(breakPoint);
+  
+  // Wrap in paragraph tags
+  return `<p>${firstParagraph.trim()}</p><p>${secondParagraph.trim()}</p>`;
 }

@@ -1,114 +1,144 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useRef, FormEvent } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import styles from './SearchBar.module.css';
-
-interface Suggestion {
-  text: string;
-  type: string;
-}
 
 export default function SearchBar() {
   const [query, setQuery] = useState('');
-  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
+  const [suggestions, setSuggestions] = useState<any[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const [loading, setLoading] = useState(false);
   const router = useRouter();
   const searchRef = useRef<HTMLDivElement>(null);
 
-  // Handle clicks outside the search component
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
-        setShowSuggestions(false);
-      }
-    }
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-
-  // Fetch suggestions when query changes
-  useEffect(() => {
+    // Function to fetch suggestions
     const fetchSuggestions = async () => {
-      if (query.trim().length < 2) {
+      if (query.length < 2) {
         setSuggestions([]);
-        setShowSuggestions(false);
         return;
       }
 
-      setLoading(true);
       try {
-        const response = await fetch(`/api/search?q=${encodeURIComponent(query)}&suggestions=true`);
-        if (response.ok) {
-          const data = await response.json();
-          if (data.suggestions && data.suggestions.length > 0) {
-            // Sort to put reviews at the top
-            const sortedSuggestions = [...data.suggestions].sort((a, b) => {
-              if (a.type === 'REVIEW' && b.type !== 'REVIEW') return -1;
-              if (a.type !== 'REVIEW' && b.type === 'REVIEW') return 1;
-              return 0;
-            });
-            setSuggestions(sortedSuggestions);
-            setShowSuggestions(true);
-          } else {
-            setSuggestions([]);
-            setShowSuggestions(false);
+        console.log('Searching for:', query);
+        
+        // Search for both reviews and products
+        const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+        console.log('Response status:', response.status);
+        
+        if (!response.ok) {
+          console.error('Search API returned status:', response.status);
+          return;
+        }
+        
+        const data = await response.json();
+        console.log('Search results:', data);
+        
+        // Process the results
+        let reviewsArray = [];
+        let productsArray = [];
+        
+        // Extract reviews and products from the response
+        if (Array.isArray(data)) {
+          // If it's a flat array, determine type by properties
+          reviewsArray = data.filter(item => item.reviewTitle);
+          productsArray = data.filter(item => item.productName);
+        } else {
+          // Handle structured response
+          if (data.reviews && Array.isArray(data.reviews)) {
+            reviewsArray = data.reviews;
+          } else if (data.results && Array.isArray(data.results)) {
+            reviewsArray = data.results.filter((item: any) => item.reviewTitle);
+          }
+          
+          if (data.products && Array.isArray(data.products)) {
+            productsArray = data.products;
+          } else if (data.results && Array.isArray(data.results)) {
+            productsArray = data.results.filter((item: any) => item.productName);
           }
         }
+        
+        // Format reviews
+        const formattedReviews = reviewsArray.map(item => ({
+          _id: item._id?.$oid || item._id,
+          title: item.reviewTitle || item.title,
+          type: 'review'
+        }));
+        
+        // Format products
+        const formattedProducts = productsArray.map(item => ({
+          _id: item._id?.$oid || item._id,
+          title: item.productName || item.name,
+          type: 'product'
+        }));
+        
+        // Combine and prioritize reviews first
+        let combinedResults = [...formattedReviews, ...formattedProducts];
+        
+        // Limit to 3 suggestions total
+        combinedResults = combinedResults.slice(0, 3);
+        
+        console.log('Combined results:', combinedResults);
+        setSuggestions(combinedResults);
+        setShowSuggestions(combinedResults.length > 0);
       } catch (error) {
         console.error('Error fetching suggestions:', error);
         setSuggestions([]);
-        setShowSuggestions(false);
-      } finally {
-        setLoading(false);
       }
     };
 
-    const debounceTimer = setTimeout(fetchSuggestions, 300);
-    return () => clearTimeout(debounceTimer);
+    // Debounce the search
+    const timer = setTimeout(() => {
+      if (query.length >= 2) {
+        fetchSuggestions();
+      } else {
+        setSuggestions([]);
+        setShowSuggestions(false);
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
   }, [query]);
 
-  const handleSubmit = (e: FormEvent) => {
+  useEffect(() => {
+    // Close suggestions when clicking outside
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+        setShowSuggestions(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (query.trim()) {
-      router.push(`/search?q=${encodeURIComponent(query.trim())}`);
+      router.push(`/search?q=${encodeURIComponent(query)}`);
       setShowSuggestions(false);
-    }
-  };
-
-  const handleSuggestionClick = (suggestion: Suggestion) => {
-    // Clear the search input before navigation
-    setQuery('');
-    setSuggestions([]);
-    setShowSuggestions(false);
-    
-    if (suggestion.type === 'REVIEW') {
-      // For reviews, navigate directly to the review page
-      router.push(`/api/search/getReviewByTitle?title=${encodeURIComponent(suggestion.text)}`);
-    } else {
-      // For products, search for the product and then scroll to it on the results page
-      router.push(`/search?q=${encodeURIComponent(suggestion.text)}&scrollToProduct=true`);
+      setQuery(''); // Clear the search text after submitting
     }
   };
 
   return (
     <div className={styles.searchContainer} ref={searchRef}>
-      <form onSubmit={handleSubmit} className={styles.searchForm}>
+      <form onSubmit={handleSearch} className={styles.searchForm}>
         <input
           type="text"
+          placeholder="SEARCH REVIEW OR PRODUCT"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          onFocus={() => query.trim().length >= 2 && setShowSuggestions(true)}
-          placeholder="SEARCH REVIEW OR PRODUCT"
+          onFocus={() => {
+            if (query.length >= 2 && suggestions.length > 0) {
+              setShowSuggestions(true);
+            }
+          }}
           className={styles.searchInput}
-          autoComplete="off"
         />
         <button type="submit" className={styles.searchButton}>
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="11" cy="11" r="8"></circle>
             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
           </svg>
@@ -116,27 +146,34 @@ export default function SearchBar() {
       </form>
       
       {showSuggestions && suggestions.length > 0 && (
-        <div className={styles.suggestionsContainer}>
-          {suggestions.map((suggestion, index) => (
-            <div 
-              key={index} 
-              className={styles.suggestionItem}
-              onClick={() => handleSuggestionClick(suggestion)}
-            >
-              <div className={styles.suggestionText}>{suggestion.text}</div>
-              <div className={styles.suggestionType}>
-                {suggestion.type}
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-      
-      {loading && (
-        <div className={styles.loadingIndicator}>
-          <div className={styles.loadingDot}></div>
-          <div className={styles.loadingDot}></div>
-          <div className={styles.loadingDot}></div>
+        <div className={styles.suggestions}>
+          {suggestions.map((item, index) => {
+            // Determine the link URL based on item type
+            // For products, we need to find the review that contains this product
+            const linkUrl = item._id 
+              ? (item.type === 'review' 
+                ? `/review/${item._id}` 
+                : `/search?q=${encodeURIComponent(item.title)}`)
+              : '/search?q=' + encodeURIComponent(query);
+              
+            // Use the title for display
+            const displayText = item.title || query;
+            
+            return (
+              <Link 
+                href={linkUrl}
+                key={index}
+                className={styles.suggestionItem}
+                onClick={() => {
+                  setShowSuggestions(false);
+                  setQuery(''); // Clear the search text when clicking a suggestion
+                }}
+              >
+                <span>{displayText}</span>
+                <span className={styles.suggestionType}>{item.type}</span>
+              </Link>
+            );
+          })}
         </div>
       )}
     </div>
