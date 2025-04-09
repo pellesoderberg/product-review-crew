@@ -70,81 +70,80 @@
 .shortSummary p {
   font-size: 1rem;
   line-height: 1.6;
-  color: #4a5568;
+  color: #000000; /* Changed to black */
+  font-weight: 500;
 }
 
 .prosConsContainer {
   display: flex;
-  gap: 2rem;
-  margin-bottom: 1rem;
-  padding: 1.5rem;
-  border: 1px solid #e2e8f0;
-  border-radius: 0.5rem;
-  background-color: #f8fafc;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+  justify-content: center; /* Center the pros/cons container */
+  max-width: 800px; /* Limit the width for better readability */
+  margin-left: auto; /* Center horizontally */
+  margin-right: auto; /* Center horizontally */
 }
 
 .prosConsColumn {
   flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.compareSection {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 2rem;
-  padding: 0.5rem 0;
-  gap: 0.5rem; /* Reduced from default to make text and link closer */
-}
-
-.compareText {
-  font-size: 0.9rem;
-  color: #000000;
-  font-weight: 500;
-}
-
-.fullReviewLink {
-  font-size: 0.9rem;
-  color: #20496e;
-  font-weight: 600;
-  text-decoration: none;
-  white-space: nowrap;
-  margin-left: 0.5rem; /* Added small margin instead of auto to keep closer */
-}
-
-.fullReviewLink:hover {
-  text-decoration: underline;
 }
 
 .proItem, .conItem {
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
 }
 
 .plusIcon, .minusIcon {
-  display: flex;
-  align-items: center;
+  display: inline-flex;
   justify-content: center;
-  width: 24px;
-  height: 24px;
-  font-size: 1.2rem;
+  align-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  margin-right: 0.5rem;
   font-weight: bold;
 }
 
 .plusIcon {
-  color: #2f855a;
+  background-color: #e6f7e6;
+  color: #1e4620;
 }
 
 .minusIcon {
-  color: #e53e3e;
+  background-color: #f7e6e6;
+  color: #461e1e;
 }
 
 .proContent, .conContent {
   flex: 1;
   color: #4a5568;
+}
+
+.compareSection {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  justify-content: center;
+  text-align: center;
+  flex-wrap: wrap;
+}
+
+.compareText {
+  color: #4a5568;
+  font-style: italic; /* Added italic style */
+}
+
+.fullReviewLink {
+  color: #1a365d;
+  text-decoration: none;
+  font-weight: 500;
+  font-style: italic; /* Added italic style */
+}
+
+.fullReviewLink:hover {
+  text-decoration: underline;
 }
 
 .reviewSection {
@@ -161,7 +160,7 @@
 .reviewSection p {
   font-size: 1rem;
   line-height: 1.6;
-  color: #4a5568;
+  color: #000000; /* Changed to black */
 }
 
 .relatedReviews {
@@ -233,7 +232,7 @@
   margin-bottom: 1.5rem;
   font-size: 1rem;
   line-height: 1.8;
-  color: #4a5568;
+  color: #000000; /* Changed to black */
 }
 
 .reviewParagraph:last-child {

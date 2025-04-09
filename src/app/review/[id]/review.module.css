@@ -18,8 +18,9 @@
 .reviewSummary {
   font-size: 1.1rem;
   line-height: 1.6;
-  color: #333;
+  color: #000000; /* Changed to black */
   max-width: 800px;
+  font-weight: 500; /* Added light bold weight */
 }
 
 .productsGrid {
@@ -154,7 +155,7 @@
   line-height: 1.8;
   text-align: left;
   font-size: 1.05rem;
-  color: #333;
+  color: #000000; /* Changed to black */
   position: relative;
   overflow: visible;
 }
@@ -341,7 +342,7 @@
   margin: 2rem 0 4rem;
   line-height: 1.8;
   font-size: 1.05rem;
-  color: #333;
+  color: #000000; /* Changed to black */
 }
 
 .comparisonText p {
@@ -472,7 +473,7 @@
 
 .relatedReviewLink,
 .latestReviewLink {
-  color: #333;
+  color: #1a365d; /* Dark blue color to match the fullReviewLink */
   text-decoration: none;
   font-weight: 500;
   transition: color 0.2s ease;
@@ -480,6 +481,55 @@
 
 .relatedReviewLink:hover,
 .latestReviewLink:hover {
-  color: #0066cc;
   text-decoration: underline;
+}
+
+/* Add these styles to match the product page layout */
+.shortSummary {
+  margin-bottom: 1.5rem;
+}
+
+.prosConsContainer {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+  justify-content: center; /* Center the pros/cons container */
+  max-width: 800px; /* Limit the width for better readability */
+  margin-left: auto; /* Center horizontally */
+  margin-right: auto; /* Center horizontally */
+}
+
+.prosConsColumn {
+  flex: 1;
+}
+
+.proItem, .conItem {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+}
+
+.plusIcon, .minusIcon {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  margin-right: 0.5rem;
+  font-weight: bold;
+}
+
+.plusIcon {
+  background-color: #e6f7e6;
+  color: #1e4620;
+}
+
+.minusIcon {
+  background-color: #f7e6e6;
+  color: #461e1e;
+}
+
+.proContent, .conContent {
+  flex: 1;
 }

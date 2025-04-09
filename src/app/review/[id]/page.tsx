@@ -166,11 +166,10 @@ export default async function ReviewPage({ params }: ReviewPageParams) {
       
       <section className={styles.detailedReview}>
         {products.map((product: any, index: number) => (
-          // In the product detail section, add an ID to each product element
           <div 
             key={product._id} 
             className={styles.productDetail}
-            id={`product-${product._id}`} // Add this ID for scrolling
+            id={`product-${product._id}`}
           >
             <h2 className={styles.productDetailTitle}>
               {index + 1}. {product.productName} - {product.award || awards[index] || "BEST CHOICE"}
@@ -184,9 +183,9 @@ export default async function ReviewPage({ params }: ReviewPageParams) {
                   height={200}
                   unoptimized={true}
                 />
-                <div className={styles.productDetailPrice}>{product.priceRange}</div>
+                <div className={styles.productDetailPrice}>{product.priceRange || product.price || '100€'}</div>
                 <a 
-                  href={product.link} 
+                  href={product.affiliateLink || product.link || '#'} 
                   target="_blank" 
                   rel="noopener noreferrer" 
                   className={styles.buyButton}
@@ -196,6 +195,38 @@ export default async function ReviewPage({ params }: ReviewPageParams) {
                 </a>
               </div>
               <div className={styles.productDetailText}>
+                <div className={styles.shortSummary}>
+                  <p>{product.shortSummary || 'No summary available for this product.'}</p>
+                </div>
+                
+                <div className={styles.prosConsContainer}>
+                  <div className={styles.prosConsColumn}>
+                    {product.pros && product.pros.length > 0 && (
+                      <>
+                        {product.pros.map((pro: string, index: number) => (
+                          <div key={`pro-${index}`} className={styles.proItem}>
+                            <span className={styles.plusIcon}>+</span>
+                            <span className={styles.proContent}>{pro}</span>
+                          </div>
+                        ))}
+                      </>
+                    )}
+                  </div>
+                  
+                  <div className={styles.prosConsColumn}>
+                    {product.cons && product.cons.length > 0 && (
+                      <>
+                        {product.cons.map((con: string, index: number) => (
+                          <div key={`con-${index}`} className={styles.conItem}>
+                            <span className={styles.minusIcon}>−</span>
+                            <span className={styles.conContent}>{con}</span>
+                          </div>
+                        ))}
+                      </>
+                    )}
+                  </div>
+                </div>
+                
                 <div className={styles.productReviewText}>
                   {typeof product.review === 'string' ? (
                     <div dangerouslySetInnerHTML={{ 
@@ -205,8 +236,6 @@ export default async function ReviewPage({ params }: ReviewPageParams) {
                     <p>{product.review || product.shortSummary}</p>
                   )}
                 </div>
-                
-                {/* Pros and cons box removed */}
               </div>
             </div>
           </div>

@@ -2,6 +2,7 @@ import { connectToDatabase } from '@/lib/mongodb';
 import { ObjectId } from 'mongodb';
 import Link from 'next/link';
 import styles from '../product.module.css';
+import RelatedReviews from '@/components/RelatedReviews';
 
 // Add this function to get the review slug for a product
 async function getReviewSlugForProduct(product: any) {
@@ -111,7 +112,7 @@ export default async function ProductPage({ params }: { params: { slug: string[]
   return (
     <div className={styles.container}>
       <h1 className={styles.productTitle}>
-        {product.rank ? `${product.rank}. ` : '1. '}{product.productName} {product.award ? `- ${product.award}` : ''}
+        {product.productName} {product.award ? `- ${product.award}` : ''}
       </h1>
       
       <div className={styles.productContent}>
@@ -182,7 +183,10 @@ export default async function ProductPage({ params }: { params: { slug: string[]
             )}
           </div>
           
-          {/* Removed the relatedReviews section */}
+          {/* Add the related reviews component */}
+          {product.category && (
+            <RelatedReviews category={product.category} />
+          )}
         </div>
       </div>
     </div>
