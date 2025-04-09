@@ -14,16 +14,24 @@ type ReviewPageParams = {
   };
 };
 
+// Update the getReviewData function to better handle different ID formats
 async function getReviewData(id: string) {
   const { db } = await connectToDatabase();
   
   try {
     let review;
     
-    // First, try to find by slug
+    // First, try to find by exact slug match
     review = await db.collection('comparison_reviews').findOne({ slug: id });
     
-    // If not found by slug, try to find by ObjectId
+    // If not found by slug, try to find by partial slug match
+    if (!review) {
+      review = await db.collection('comparison_reviews').findOne({
+        slug: { $regex: new RegExp(id, 'i') }
+      });
+    }
+    
+    // If still not found and it's a valid ObjectId, try by ID
     if (!review && ObjectId.isValid(id)) {
       const objectId = new ObjectId(id);
       review = await db.collection('comparison_reviews').findOne({ _id: objectId });
@@ -32,6 +40,15 @@ async function getReviewData(id: string) {
       if (review && review.slug) {
         return { redirect: `/review/${review.slug}` };
       }
+    }
+    
+    // If still not found, try to find by category
+    if (!review) {
+      // Try to extract a category from the ID string
+      const possibleCategory = id.replace(/^best-|-compared$/g, '').replace(/-/g, ' ');
+      review = await db.collection('comparison_reviews').findOne({
+        category: { $regex: new RegExp(possibleCategory, 'i') }
+      });
     }
     
     if (!review) {
@@ -353,4 +370,45 @@ function formatProductReviewText(text: string): string {
   
   // Wrap in paragraph tags
   return `<p>${firstParagraph.trim()}</p><p>${secondParagraph.trim()}</p>`;
+}
+
+// Add at the top of the file, after imports
+
+// Generate static pages for all reviews
+export async function generateStaticParams() {
+  const { db } = await connectToDatabase();
+  
+  // Get all reviews that have slugs
+  const reviews = await db.collection('comparison_reviews')
+    .find({ slug: { $exists: true } })
+    .project({ slug: 1, _id: 1 })
+    .toArray();
+  
+  // Return an array of id params
+  return reviews.map((review) => ({
+    id: review.slug || review._id.toString(),
+  }));
+}
+
+// Add metadata for better SEO
+// Fix the metadata function to properly await params
+export async function generateMetadata({ params }: { params: { id: string } | Promise<{ id: string }> }) {
+// Await params if it's a Promise
+const resolvedParams = 'then' in params ? await params : params;
+const id = resolvedParams.id;
+const data = await getReviewData(id);
+
+if (!data || 'redirect' in data) {
+return {
+title: 'Review Not Found',
+description: 'The review you are looking for could not be found.',
+};
+}
+
+const { review } = data;
+
+return {
+title: review.reviewTitle || 'Product Comparison Review',
+description: review.reviewSummary || 'Detailed comparison of top products',
+};
 }

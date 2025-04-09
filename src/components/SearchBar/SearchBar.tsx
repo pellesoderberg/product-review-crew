@@ -70,7 +70,9 @@ export default function SearchBar() {
         const formattedProducts = productsArray.map(item => ({
           _id: item._id?.$oid || item._id,
           title: item.productName || item.name,
-          type: 'product'
+          type: 'product',
+          slug: item.slug || item.productName?.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') || '',
+          award: item.award // Make sure to include the award field
         }));
         
         // Combine and prioritize reviews first
@@ -152,42 +154,21 @@ export default function SearchBar() {
               <div 
                 key={index}
                 className={styles.suggestionItem}
-                onClick={async () => {
+                onClick={() => {
                   setShowSuggestions(false);
                   setQuery(''); // Clear the search text when clicking a suggestion
                   
                   // Handle different types of suggestions
+                  // Update the product suggestion click handler in SearchBar.tsx
                   if (item.type === 'product') {
-                    try {
-                      // First, find the review that contains this product
-                      const response = await fetch(`/api/redirect-to-review?productId=${item._id}`);
-                      
-                      if (response.ok) {
-                        // Get the URL from the response
-                        const url = response.url;
-                        
-                        // Check if we got redirected to a review page
-                        if (url.includes('/review/')) {
-                          // Extract the review ID/slug from the URL
-                          const reviewPath = url.split('/review/')[1].split('#')[0];
-                          
-                          // Manually construct the URL with the hash
-                          router.push(`/review/${reviewPath}#product-${item._id}`);
-                        } else {
-                          // If not redirected to a review, just follow the redirect
-                          window.location.href = url;
-                        }
-                      } else {
-                        // Fallback to search page
-                        router.push(`/search?q=${encodeURIComponent(item.title)}`);
-                      }
-                    } catch (error) {
-                      // Fallback to search
-                      router.push(`/search?q=${encodeURIComponent(item.title)}`);
-                    }
+                  // Use slug and award for SEO-friendly URL
+                  const award = item.award || 'details';
+                  const seoAward = award.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+                  console.log("Navigating to product with award:", award, "SEO award:", seoAward);
+                  router.push(`/product/${item.slug}/${seoAward}`);
                   } else {
-                    // For reviews, navigate directly to the review page
-                    router.push(`/review/${item._id}`);
+                  // For reviews, navigate directly to the review page
+                  router.push(`/review/${item._id}`);
                   }
                 }}
               >

@@ -16,14 +16,14 @@ export default function SearchSuggestions({
     return null;
   }
 
+  // Let's update the handleSuggestionClick function to ensure proper routing
   const handleSuggestionClick = (suggestion: any) => {
     // Call the parent's click handler to close the suggestions
     onSuggestionClick(suggestion);
     
-    // For products, find the review and redirect with hash for scrolling
+    // For products, redirect to a dedicated product page
     if (suggestion.type === 'product') {
-      // Redirect to the API endpoint that will find the review and redirect with hash
-      router.push(`/api/redirect-to-review?productId=${suggestion._id}`);
+      router.push(`/product/${suggestion._id}`);
     } else if (suggestion.type === 'review') {
       // Direct navigation to review page
       router.push(`/review/${suggestion.slug || suggestion._id}`);

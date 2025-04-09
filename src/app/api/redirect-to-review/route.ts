@@ -12,6 +12,15 @@ export async function GET(request: NextRequest) {
   }
   
   try {
+    // Redirect to the product page instead of the review page
+    return NextResponse.redirect(new URL(`/product/${productId}`, request.url));
+  } catch (error) {
+    console.error('Error redirecting to product:', error);
+    return NextResponse.redirect(new URL('/search', request.url));
+  }
+}
+
+try {
     // Connect to MongoDB
     const { db } = await connectToDatabase();
     

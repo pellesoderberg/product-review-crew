@@ -3,6 +3,8 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 1rem;
+  min-height: 100vh; /* Keep this */
+  padding-top: 70px; /* Keep this for the fixed header */
 }
 
 .heroSection {
@@ -10,7 +12,9 @@
   justify-content: space-between;
   align-items: center;
   padding: 2rem 0;
-  min-height: 500px;
+  min-height: calc(100vh - 70px); /* This is good, but let's make it more explicit */
+  height: calc(100vh - 70px); /* Force the exact height */
+  margin-bottom: 2rem; /* Add space after the hero section */
 }
 
 .heroContent {

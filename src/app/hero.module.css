@@ -4,14 +4,32 @@
   align-items: center;
   justify-content: space-between;
   padding: 80px 40px;
-  min-height: 500px;
+  min-height: calc(100vh - 70px);
+  height: calc(100vh - 70px);
   background-color: white;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* Add or update this CSS rule to move the NEW REVIEW! text up */
+.newReviewTag {
+  font-size: 18px;
+  font-weight: 600;
+  color: #4a5568;
+  margin-bottom: 35px; /* Increase this value to create more space */
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  animation: fadeIn 0.8s ease-out forwards;
+  opacity: 0;
+  margin-top: -20px; /* Add negative margin to move it up */
 }
 
 .heroContent {
   width: 50%;
   padding-left: 0;
-  margin-left: 110px; /* Increased from 40px to move content further right */
+  margin-left: 110px;
+  animation: slideInFromLeft 0.8s ease-out forwards;
+  opacity: 0;
 }
 
 .heroTitle {
@@ -32,12 +50,19 @@
 .heroButton {
   background-color: black;
   color: white;
+  border: none;
   padding: 12px 24px;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   text-transform: uppercase;
-  border: none;
   cursor: pointer;
+  transition: background-color 0.3s;
+  animation: fadeIn 1s ease-out 0.6s forwards;
+  opacity: 0;
+}
+
+.heroButton:hover {
+  background-color: #333;
 }
 
 .heroImage {
@@ -45,6 +70,60 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  animation: slideInFromRight 0.8s ease-out forwards;
+  opacity: 0;
+}
+
+/* Animation keyframes */
+@keyframes slideInFromLeft {
+  0% {
+    transform: translateX(-50px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInFromRight {
+  0% {
+    transform: translateX(50px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Add responsive styles */
+@media (max-width: 768px) {
+  .heroSection {
+    flex-direction: column;
+    padding: 60px 20px;
+    height: auto;
+    min-height: calc(100vh - 70px);
+  }
+  
+  .heroContent {
+    width: 100%;
+    margin-left: 0;
+    margin-bottom: 40px;
+  }
+  
+  .heroImage {
+    width: 100%;
+  }
 }
 
 .heroImage img {

@@ -14,6 +14,7 @@ export default async function Home() {
       {/* Hero section with featured product */}
       <section className={heroStyles.heroSection}>
         <div className={heroStyles.heroContent}>
+          <div className={heroStyles.newReviewTag}>NEW REVIEW!</div>
           <h1 className={heroStyles.heroTitle}>
             {featuredProduct?.productName || "NEW REVIEW"}
           </h1>

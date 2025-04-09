@@ -1,0 +1,241 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.productTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  color: #1a202c;
+}
+
+.productContent {
+  display: flex;
+  gap: 3rem;
+}
+
+.productImageContainer {
+  flex: 0 0 300px;
+  display: flex;
+  flex-direction: column;
+}
+
+.productImage {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  margin-bottom: 1rem;
+}
+
+.priceContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.price {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a202c;
+}
+
+.buyButton {
+  display: inline-block;
+  background-color: #1a1a4b;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 0.25rem;
+  text-align: center;
+  width: 100%;
+  transition: background-color 0.2s;
+}
+
+.buyButton:hover {
+  background-color: #2a2a6a;
+}
+
+.productDescription {
+  flex: 1;
+}
+
+.shortSummary {
+  margin-bottom: 2rem;
+}
+
+.shortSummary p {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #4a5568;
+}
+
+.prosConsContainer {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 1rem;
+  padding: 1.5rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  background-color: #f8fafc;
+}
+
+.prosConsColumn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.compareSection {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding: 0.5rem 0;
+  gap: 0.5rem; /* Reduced from default to make text and link closer */
+}
+
+.compareText {
+  font-size: 0.9rem;
+  color: #000000;
+  font-weight: 500;
+}
+
+.fullReviewLink {
+  font-size: 0.9rem;
+  color: #20496e;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  margin-left: 0.5rem; /* Added small margin instead of auto to keep closer */
+}
+
+.fullReviewLink:hover {
+  text-decoration: underline;
+}
+
+.proItem, .conItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.plusIcon, .minusIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.plusIcon {
+  color: #2f855a;
+}
+
+.minusIcon {
+  color: #e53e3e;
+}
+
+.proContent, .conContent {
+  flex: 1;
+  color: #4a5568;
+}
+
+.reviewSection {
+  margin-bottom: 2rem;
+}
+
+.reviewSection h2 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #1a202c;
+}
+
+.reviewSection p {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #4a5568;
+}
+
+.relatedReviews {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.relatedReviews h3 {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  color: #1a202c;
+}
+
+.viewReviewButton {
+  background-color: #3182ce;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.viewReviewButton:hover {
+  background-color: #2c5282;
+}
+
+.backButton {
+  background-color: #3182ce;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-top: 1rem;
+}
+
+.backButton:hover {
+  background-color: #2c5282;
+}
+
+@media (max-width: 768px) {
+  .productContent {
+    flex-direction: column;
+  }
+  
+  .productImageContainer {
+    flex: 0 0 auto;
+    margin-bottom: 2rem;
+  }
+  
+  .prosConsRow {
+    flex-direction: column;
+  }
+  
+  .compareSection {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+}
+
+
+.reviewParagraph {
+  margin-bottom: 1.5rem;
+  font-size: 1rem;
+  line-height: 1.8;
+  color: #4a5568;
+}
+
+.reviewParagraph:last-child {
+  margin-bottom: 0;
+}
