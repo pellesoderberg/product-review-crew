@@ -1,0 +1,55 @@
+.prosConsContainer {
+  display: flex;
+  gap: 0rem;
+  margin-bottom: 2rem;
+  margin-top: 2.2rem;;
+  justify-content: center; /* Center the pros/cons container */
+  max-width: 800px; /* Limit the width for better readability */
+  margin-left: auto; /* Center horizontally */
+  margin-right: auto; /* Center horizontally */
+}
+
+.prosConsColumn {
+  flex: 1;
+}
+
+.prosList, .consList {
+  padding-left: 0;
+  margin-bottom: 0;
+  list-style: none;
+}
+
+.proItem, .conItem {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+}
+
+.plusIcon, .minusIcon {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  margin-right: 0.5rem;
+  font-weight: bold;
+  min-width: 20px;
+}
+
+.plusIcon {
+  background-color: #e6f7e6;
+  color: #1e4620;
+}
+
+.minusIcon {
+  background-color: #f7e6e6;
+  color: #461e1e;
+}
+
+.proContent, .conContent {
+  flex: 1;
+  color: #000000;
+  font-size: 1rem;
+  line-height: 1.4;
+}

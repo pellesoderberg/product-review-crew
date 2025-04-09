@@ -1,9 +1,10 @@
 import Image from 'next/image';
-import Link from 'next/link'; // Add this import
+import Link from 'next/link';
 import { connectToDatabase } from '@/lib/mongodb';
 import { ObjectId } from 'mongodb';
 import styles from './review.module.css';
 import { redirect } from 'next/navigation';
+import ProsConsBox from '@/components/ProsConsBox';
 
 // Define the params type
 type ReviewPageParams = {
@@ -153,7 +154,7 @@ export default async function ReviewPage({ params }: ReviewPageParams) {
       {/* Add comparison review section */}
       {review.comparisonReview && (
         <div className={styles.comparisonText}>
-          <h2 className={styles.sectionTitle}>REVIEW</h2>
+          <h2 className={styles.sectionTitle}>Product-review-crew's comparison</h2>
           {typeof review.comparisonReview === 'string' ? (
             <div dangerouslySetInnerHTML={{ 
               __html: formatReviewText(review.comparisonReview) 
@@ -172,7 +173,7 @@ export default async function ReviewPage({ params }: ReviewPageParams) {
             id={`product-${product._id}`}
           >
             <h2 className={styles.productDetailTitle}>
-              {index + 1}. {product.productName} - {product.award || awards[index] || "BEST CHOICE"}
+              #{index + 1} {product.productName} - {product.award || awards[index] || "BEST CHOICE"}
             </h2>
             <div className={styles.productDetailContent}>
               <div className={styles.productDetailImage}>
@@ -183,7 +184,7 @@ export default async function ReviewPage({ params }: ReviewPageParams) {
                   height={200}
                   unoptimized={true}
                 />
-                <div className={styles.productDetailPrice}>{product.priceRange || product.price || '100€'}</div>
+                <div className={styles.productDetailPrice}>{product.priceRange || product.price || '$399'}</div>
                 <a 
                   href={product.affiliateLink || product.link || '#'} 
                   target="_blank" 
@@ -194,47 +195,26 @@ export default async function ReviewPage({ params }: ReviewPageParams) {
                   BUY NOW
                 </a>
               </div>
+              
+              {/* Product detail text section */}
               <div className={styles.productDetailText}>
-                <div className={styles.shortSummary}>
-                  <p>{product.shortSummary || 'No summary available for this product.'}</p>
+                {/* Short summary with bold styling */}
+                <div className={styles.productShortSummary}>
+                  {product.shortSummary || 'No summary available for this product.'}
                 </div>
                 
-                <div className={styles.prosConsContainer}>
-                  <div className={styles.prosConsColumn}>
-                    {product.pros && product.pros.length > 0 && (
-                      <>
-                        {product.pros.map((pro: string, index: number) => (
-                          <div key={`pro-${index}`} className={styles.proItem}>
-                            <span className={styles.plusIcon}>+</span>
-                            <span className={styles.proContent}>{pro}</span>
-                          </div>
-                        ))}
-                      </>
-                    )}
-                  </div>
-                  
-                  <div className={styles.prosConsColumn}>
-                    {product.cons && product.cons.length > 0 && (
-                      <>
-                        {product.cons.map((con: string, index: number) => (
-                          <div key={`con-${index}`} className={styles.conItem}>
-                            <span className={styles.minusIcon}>−</span>
-                            <span className={styles.conContent}>{con}</span>
-                          </div>
-                        ))}
-                      </>
-                    )}
-                  </div>
-                </div>
+                {/* Use the new ProsConsBox component */}
+                <ProsConsBox pros={product.pros || []} cons={product.cons || []} />
                 
-                <div className={styles.productReviewText}>
-                  {typeof product.review === 'string' ? (
-                    <div dangerouslySetInnerHTML={{ 
-                      __html: formatProductReviewText(product.review || product.shortSummary) 
-                    }} />
-                  ) : (
-                    <p>{product.review || product.shortSummary}</p>
-                  )}
+                {/* Review content with normal styling */}
+                <h3 className={styles.sectionTitle}></h3>
+                <div className={styles.productReviewContent}>
+                  <div 
+                    className={styles.productReviewText} 
+                    dangerouslySetInnerHTML={{ 
+                      __html: formatProductReviewText(product.review || product.reviewText || '') 
+                    }} 
+                  />
                 </div>
               </div>
             </div>

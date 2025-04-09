@@ -9,10 +9,10 @@
 }
 
 .reviewTitle {
-  font-size: 2.5rem;
+  font-size: 2rem;
   font-weight: 700;
-  margin-bottom: 1rem;
-  text-transform: uppercase;
+  margin-bottom: 2rem;
+  color: #000000;
 }
 
 .reviewSummary {
@@ -28,6 +28,7 @@
   grid-template-columns: repeat(3, 1fr);
   gap: 1.5rem;
   margin-bottom: 4rem;
+  margin-top: 4rem; /* Added margin-top to move the cards down */
 }
 
 .productCard {
@@ -97,16 +98,17 @@
 }
 
 .buyButton {
-  color: #fff;
-  padding: 0.75rem 2rem;
-  border-radius: 0;
+  display: inline-block;
+  color: white;
+  padding: 0.75rem 1.5rem;
   font-weight: 600;
   text-decoration: none;
-  display: inline-block;
-  transition: opacity 0.2s;
+  border-radius: 0.25rem;
+  text-align: center;
+  width: 70%; /* Changed from 100% to 80% to make it less wide */
+  transition: background-color 0.2s;
   text-transform: uppercase;
   margin-bottom: 1.5rem;
-  width: 80%;
 }
 
 .buyButton:hover {
@@ -128,7 +130,7 @@
 }
 
 .productDetailTitle {
-  font-size: 1.8rem;
+  font-size: 1.5rem; /* Changed from 1.8rem to make it smaller */
   font-weight: 700;
   margin-bottom: 2rem;
 }
@@ -151,13 +153,42 @@
   margin: 1rem 0;
 }
 
+/* Add a specific class for product short summary */
+.productShortSummary {
+  font-weight: 600; /* Make it bold */
+  color: #000000;
+  line-height: 1.8;
+  margin-bottom: 1.5rem;
+}
+
+/* Keep the existing productDetailText as a container */
 .productDetailText {
   line-height: 1.8;
   text-align: left;
   font-size: 1.05rem;
-  color: #000000; /* Changed to black */
+  color: #000000;
   position: relative;
   overflow: visible;
+}
+
+/* Separate class for the actual review content */
+.productReviewContent {
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+  width: 100%;
+}
+
+.productReviewText {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: #000000;
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+.productReviewText p {
+  margin-bottom: 1.5rem;
 }
 
 .productReviewText {
@@ -364,11 +395,11 @@
 }
 
 .sectionTitle {
-  font-size: 1.8rem;
+  font-size: 1.5rem;
   font-weight: 700;
   margin: 2rem 0 1.5rem;
-  text-transform: uppercase;
-  color: #444;
+  text-transform: none; /* Changed from uppercase to none */
+  color: #000000;
 }
 
 .comparisonText ul, 
@@ -484,14 +515,107 @@
   text-decoration: underline;
 }
 
-/* Add these styles to match the product page layout */
-.shortSummary {
+/* Update the product short summary styling */
+.productShortSummary {
+  font-weight: 500; /* Changed from 600 to 500 for light bold */
   margin-bottom: 1.5rem;
+  line-height: 1.6;
+  color: #000000;
+}
+
+/* Update the product features styling */
+.productFeatures {
+  float: none;
+  width: 100%;
+  min-width: auto;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: center; /* Center the pros/cons box */
+  background-color: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  gap: 2rem;
+}
+
+.featureSection {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.featureTitle {
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  font-size: 1rem;
+  display: none; /* Hide the title as in the image */
+}
+
+.prosList, .consList {
+  padding-left: 0;
+  margin-bottom: 0;
+  list-style: none;
+}
+
+/* Update the pros and cons styling to match product page */
+.prosList li, .consList li {
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: flex-start;
+  font-size: 1rem;
+  line-height: 1.4;
+  max-width: none;
+}
+
+.featureIcon {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  margin-right: 0.5rem;
+  font-weight: bold;
+  min-width: 20px;
+  font-size: 1rem;
+}
+
+.proIcon {
+  background-color: #e6f7e6;
+  color: #1e4620;
+}
+
+.conIcon {
+  background-color: #f7e6e6;
+  color: #461e1e;
+}
+
+/* Style for the review content */
+.productReviewContent {
+  margin-top: 1.5rem;
+  clear: both;
+  width: 100%; /* Ensure full width */
+}
+
+.productReviewText {
+  display: block;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  text-wrap: wrap;
+  width: 100%; /* Ensure full width */
+}
+
+.productReviewText p {
+  margin-bottom: 1rem;
+  line-height: 1.6;
+  width: 100%; /* Ensure full width */
 }
 
 .prosConsContainer {
   display: flex;
-  gap: 1.5rem;
+  gap: 0.75rem; /* Reduced from 1.5rem to 0.75rem to make the distance smaller */
   margin-bottom: 1.5rem;
   justify-content: center; /* Center the pros/cons container */
   max-width: 800px; /* Limit the width for better readability */

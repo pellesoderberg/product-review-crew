@@ -21,12 +21,12 @@ export default async function Home() {
           <p className={heroStyles.heroText}>
             {featuredProduct?.shortSummary || "WE'VE SET BOLD AND AMBITIOUS TARGETS FOR 2025 AGAINST OUR FOCUS AREAS OS PEOPLE, PLANET AND PLAY. LEARN MORE ABOUT OUR JOURNEY TO A BETTER FUTURE"}
           </p>
-          {/* Add product ID to the URL for automatic scrolling */}
-          <Link href={featuredReview && featuredProduct 
-            ? `/review/${featuredReview.slug || featuredReview._id}#product-${featuredProduct._id}` 
+          {/* Updated to match the search suggestion URL format with product slug and award */}
+          <Link href={featuredProduct 
+            ? `/product/${featuredProduct.slug || featuredProduct._id}/${featuredProduct.award || 'best-choice'}` 
             : "/search"}>
             <button className={heroStyles.heroButton}>
-              SHOW REVIEW
+              SHOW PRODUCT
             </button>
           </Link>
         </div>

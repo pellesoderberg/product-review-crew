@@ -3,6 +3,9 @@
   margin: 0 auto;
   padding: 2rem 1rem;
 }
+.header {
+    margin-bottom: 18rem;
+  }
 
 .productTitle {
   font-size: 2rem;

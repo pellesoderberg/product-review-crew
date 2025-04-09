@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { connectToDatabase } from '@/lib/mongodb';
-import styles from '../app/review/[id]/review.module.css';
-import productStyles from '../app/product/product.module.css';
+import styles from '../../app/review/[id]/review.module.css';
+import productStyles from '../../app/product/product.module.css';
 
 interface RelatedReviewsProps {
   category: string;

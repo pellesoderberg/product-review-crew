@@ -3,6 +3,7 @@ import { ObjectId } from 'mongodb';
 import Link from 'next/link';
 import styles from '../product.module.css';
 import RelatedReviews from '@/components/RelatedReviews';
+import ProsConsBox from '@/components/ProsConsBox';
 
 // Add this function to get the review slug for a product
 async function getReviewSlugForProduct(product: any) {
@@ -135,33 +136,8 @@ export default async function ProductPage({ params }: { params: { slug: string[]
             <p>{product.shortSummary || 'No summary available for this product.'}</p>
           </div>
           
-          <div className={styles.prosConsContainer}>
-            <div className={styles.prosConsColumn}>
-              {product.pros && product.pros.length > 0 && (
-                <>
-                  {product.pros.map((pro: string, index: number) => (
-                    <div key={`pro-${index}`} className={styles.proItem}>
-                      <span className={styles.plusIcon}>+</span>
-                      <span className={styles.proContent}>{pro}</span>
-                    </div>
-                  ))}
-                </>
-              )}
-            </div>
-            
-            <div className={styles.prosConsColumn}>
-              {product.cons && product.cons.length > 0 && (
-                <>
-                  {product.cons.map((con: string, index: number) => (
-                    <div key={`con-${index}`} className={styles.conItem}>
-                      <span className={styles.minusIcon}>−</span>
-                      <span className={styles.conContent}>{con}</span>
-                    </div>
-                  ))}
-                </>
-              )}
-            </div>
-          </div>
+          {/* Replace the existing pros/cons container with ProsConsBox */}
+          <ProsConsBox pros={product.pros || []} cons={product.cons || []} />
           
           <div className={styles.compareSection}>
             <span className={styles.compareText}>See this product compared to similar products</span>
@@ -173,7 +149,6 @@ export default async function ProductPage({ params }: { params: { slug: string[]
           </div>
           
           <div className={styles.reviewSection}>
-            <h2>REVIEW</h2>
             {product.review ? (
               <>
                 {formatReviewIntoParagraphs(product.review)}
@@ -264,3 +239,8 @@ function formatReviewIntoParagraphs(reviewText: string) {
     </>
   );
 }
+
+// Remove these lines that are causing the error:
+// // Replace your current pros/cons section with:
+// {/* Replace your current pros/cons section with the ProsConsBox component */}
+// <ProsConsBox pros={productData.pros || []} cons={productData.cons || []} />
