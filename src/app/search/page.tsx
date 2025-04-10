@@ -46,7 +46,12 @@ export default async function SearchPage({
                 className={styles.reviewCard}
               >
                 <h3 className={styles.reviewTitle}>{review.reviewTitle}</h3>
-                <p className={styles.reviewSummary}>{review.reviewSummary}</p>
+                <p className={styles.reviewSummary}>
+                  {/* Truncate the summary to 10 words */}
+                  {review.reviewSummary 
+                    ? review.reviewSummary.split(' ').slice(0, 20).join(' ') + (review.reviewSummary.split(' ').length > 10 ? '...' : '')
+                    : 'No summary available'}
+                </p>
                 <span className={styles.viewReview}>View Review →</span>
               </Link>
             ))}

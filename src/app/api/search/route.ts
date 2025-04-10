@@ -27,9 +27,7 @@ export async function GET(request: NextRequest) {
     const productResults = await db.collection('product_reviews')
       .find({
         $or: [
-          { productName: { $regex: query, $options: 'i' } },
-          { shortSummary: { $regex: query, $options: 'i' } }
-        ]
+          { productName: { $regex: query, $options: 'i' } }        ]
       })
       .limit(5)
       .toArray();
@@ -44,9 +42,7 @@ export async function GET(request: NextRequest) {
     const reviewResults = await db.collection('comparison_reviews')
       .find({
         $or: [
-          { reviewTitle: { $regex: query, $options: 'i' } },
-          { reviewSummary: { $regex: query, $options: 'i' } },
-          { category: { $regex: query, $options: 'i' } }
+          { reviewTitle: { $regex: query, $options: 'i' } }
         ]
       })
       .limit(5)

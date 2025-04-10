@@ -1,10 +1,11 @@
 .header {
   background-color: #fff;
-  border-bottom: 1px solid #eaeaea;
-  padding: 1rem 0;
-  position: sticky;
+  border-bottom: 0px solid #eaeaea;
+  padding: 1rem 5rem;
+  position: fixed;
   top: 0;
   z-index: 100;
+  width: 100%;
 }
 
 .container {
@@ -27,6 +28,7 @@
 .searchContainer {
   margin: 0 1rem;
   width: 400px;
+  position: center;
 }
 
 .nav {
