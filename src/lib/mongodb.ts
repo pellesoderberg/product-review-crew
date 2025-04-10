@@ -1,7 +1,7 @@
 import { MongoClient } from 'mongodb';
 
 const MONGO_URI = "mongodb+srv://pellesoederberg:EEZzvlcV10QFdzd9@mongodb-cluster.rn36cgo.mongodb.net/?retryWrites=true&w=majority&appName=mongodb-cluster";
-const DATABASE_NAME = "scraped_data";
+const DATABASE_NAME = "reviews";
 
 // Cache the MongoDB connection
 let cachedClient: MongoClient | null = null;
