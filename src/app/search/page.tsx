@@ -1,148 +1,122 @@
-'use client';
-
-import { useEffect, useState } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { connectToDatabase } from '@/lib/mongodb';
 import Link from 'next/link';
-import { ComparisonReview, Product } from '@/types';
-import Loading from '@/components/Loading/Loading';
+import Image from 'next/image';
 import styles from './search.module.css';
 
-export default function SearchPage() {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const query = searchParams.get('q');
+export default async function SearchPage({
+  searchParams,
+}: {
+  searchParams: { q: string } | Promise<{ q: string }>;
+}) {
+  // Await searchParams if it's a Promise
+  const resolvedParams = 'then' in searchParams ? await searchParams : searchParams;
+  const query = resolvedParams.q || '';
   
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [products, setProducts] = useState<Product[]>([]);
-  const [reviews, setReviews] = useState<ComparisonReview[]>([]);
-
-  useEffect(() => {
-    // If no query, redirect to home
-    if (!query) {
-      router.push('/');
-      return;
-    }
-
-    const fetchResults = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        
-        // Add a timestamp to prevent caching issues
-        const response = await fetch(`/api/search?q=${encodeURIComponent(query)}&t=${Date.now()}`);
-        
-        if (!response.ok) {
-          console.error('Search API error:', await response.text());
-          throw new Error('Failed to fetch search results');
-        }
-        
-        const data = await response.json();
-        setProducts(data.products || []);
-        setReviews(data.reviews || []);
-      } catch (err) {
-        console.error('Search error:', err);
-        setError('Failed to load search results. Please try again later.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchResults();
-  }, [query, router]);
-
-  useEffect(() => {
-    // Check if we should scroll to a product
-    const scrollToProduct = searchParams.get('scrollToProduct') === 'true';
-    const productQuery = searchParams.get('q');
-    
-    if (scrollToProduct && productQuery && products.length > 0) {
-      // Find the product that best matches the query
-      const matchingProduct = products.find(product => 
-        product.productName.toLowerCase().includes(productQuery.toLowerCase())
-      );
-      
-      if (matchingProduct) {
-        // Find the product element and scroll to it
-        const productElement = document.getElementById(`product-${matchingProduct._id}`);
-        if (productElement) {
-          productElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          // Highlight the element temporarily
-          productElement.classList.add('highlight-product');
-          setTimeout(() => {
-            productElement.classList.remove('highlight-product');
-          }, 2000);
-        }
-      }
-    }
-  }, [products, searchParams]);
-
-  if (loading) {
-    return <Loading />;
+  // If no query, show empty search page
+  if (!query) {
+    return (
+      <div className={styles.container}>
+        <h1 className={styles.title}>Search Results</h1>
+        <p className={styles.noResults}>Please enter a search term to find reviews and products.</p>
+      </div>
+    );
   }
+
+  // Get search results
+  const { reviews, products } = await getSearchResults(query);
+  
+  const hasResults = reviews.length > 0 || products.length > 0;
 
   return (
     <div className={styles.container}>
-      <header className={styles.header}>
-        <h1 className={styles.title}>Search Results for "{query}"</h1>
-      </header>
-
-      {error && (
-        <div className={styles.error}>
-          <p>{error}</p>
-        </div>
+      <h1 className={styles.title}>Search Results for "{query}"</h1>
+      
+      {!hasResults && (
+        <p className={styles.noResults}>No results found for "{query}". Try a different search term.</p>
       )}
-
-      {!error && products.length === 0 && reviews.length === 0 && (
-        <div className={styles.noResults}>
-          <p>No results found for "{query}". Try a different search term.</p>
-        </div>
-      )}
-
+      
       {reviews.length > 0 && (
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Comparison Reviews</h2>
+        <div className={styles.section}>
+          <h2 className={styles.sectionTitle}>Reviews</h2>
           <div className={styles.reviewsGrid}>
             {reviews.map((review) => (
               <Link 
-                href={`/review/${review._id}`} 
-                key={review._id}
+                href={`/review/${review.slug || review._id}`} 
+                key={review._id.toString()} 
                 className={styles.reviewCard}
               >
                 <h3 className={styles.reviewTitle}>{review.reviewTitle}</h3>
                 <p className={styles.reviewSummary}>{review.reviewSummary}</p>
-                <div className={styles.meta}>
-                  <span className={styles.category}>{review.category}</span>
-                  <span className={styles.date}>
-                    {new Date(review.updatedAt).toLocaleDateString()}
-                  </span>
+                <span className={styles.viewReview}>View Review →</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+      
+      {products.length > 0 && (
+        <div className={styles.section}>
+          <h2 className={styles.sectionTitle}>Products</h2>
+          <div className={styles.productsGrid}>
+            {products.map((product) => (
+              <Link 
+                href={`/product/${product.slug || product._id}/${product.award || 'details'}`} 
+                key={product._id.toString()} 
+                className={styles.productCard}
+              >
+                <div className={styles.productImageContainer}>
+                  {product.image && (
+                    <Image 
+                      src={product.image} 
+                      alt={product.productName}
+                      width={150}
+                      height={150}
+                      className={styles.productImage}
+                      unoptimized={true}
+                    />
+                  )}
+                </div>
+                <div className={styles.productInfo}>
+                  <h3 className={styles.productName}>{product.productName}</h3>
+                  <p className={styles.productSummary}>{product.shortSummary}</p>
+                  <span className={styles.viewProduct}>View Product →</span>
                 </div>
               </Link>
             ))}
           </div>
-        </section>
-      )}
-
-      {products.length > 0 && (
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Products</h2>
-          <div className={styles.productsGrid}>
-            {products.map((product) => (
-              <div key={product._id} className={styles.productCard}>
-                <h3 className={styles.productName}>{product.productName}</h3>
-                {product.ranking && (
-                  <div className={styles.ranking}>#{product.ranking}</div>
-                )}
-                <p className={styles.productSummary}>{product.shortSummary}</p>
-                <div className={styles.meta}>
-                  <span className={styles.price}>{product.priceRange}</span>
-                  <span className={styles.category}>{product.category}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
+        </div>
       )}
     </div>
   );
+}
+
+// Function to get search results
+async function getSearchResults(query: string) {
+  try {
+    const { db } = await connectToDatabase();
+    
+    // Create a case-insensitive regex for the search
+    const searchRegex = new RegExp(query, 'i');
+    
+    // Search for reviews - only match reviewTitle
+    const reviews = await db.collection('comparison_reviews')
+      .find({
+        reviewTitle: searchRegex
+      })
+      .limit(10)
+      .toArray();
+    
+    // Search for products - only match productName
+    const products = await db.collection('product_reviews')
+      .find({
+        productName: searchRegex
+      })
+      .limit(10)
+      .toArray();
+    
+    return { reviews, products };
+  } catch (error) {
+    console.error('Error searching:', error);
+    return { reviews: [], products: [] };
+  }
 }

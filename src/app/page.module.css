@@ -166,3 +166,22 @@
   background-color: #3182ce;
   color: white;
 }
+
+.relatedReviewsSection {
+  padding: 3rem 0;
+  background-color: #ffffff;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.sectionTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  text-align: center;
+  color: #fcfdff;
+}

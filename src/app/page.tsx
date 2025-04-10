@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from 'next/link';
 import SearchBar from '@/components/SearchBar/SearchBar';
+import RelatedReviews from '@/components/RelatedReviews';
 import styles from './page.module.css';
 import heroStyles from './hero.module.css';
 import { connectToDatabase } from '@/lib/mongodb';
@@ -21,9 +22,9 @@ export default async function Home() {
           <p className={heroStyles.heroText}>
             {featuredProduct?.shortSummary || "WE'VE SET BOLD AND AMBITIOUS TARGETS FOR 2025 AGAINST OUR FOCUS AREAS OS PEOPLE, PLANET AND PLAY. LEARN MORE ABOUT OUR JOURNEY TO A BETTER FUTURE"}
           </p>
-          {/* Updated to match the search suggestion URL format with product slug and award */}
+          {/* Updated to format the award properly in the URL */}
           <Link href={featuredProduct 
-            ? `/product/${featuredProduct.slug || featuredProduct._id}/${featuredProduct.award || 'best-choice'}` 
+            ? `/product/${featuredProduct.slug || featuredProduct._id}/${(featuredProduct.award || 'best-choice').toLowerCase().replace(/\s+/g, '-')}` 
             : "/search"}>
             <button className={heroStyles.heroButton}>
               SHOW PRODUCT
@@ -46,6 +47,18 @@ export default async function Home() {
       </section>
       
       {/* Rest of your homepage content */}
+      
+      {/* Add RelatedReviews component at the bottom */}
+      <section className={styles.relatedReviewsSection}>
+        <div className={styles.container}>
+          <h2 className={styles.sectionTitle}>Explore Our Reviews</h2>
+          {featuredProduct && featuredProduct.category ? (
+            <RelatedReviews category={featuredProduct.category} />
+          ) : (
+            <RelatedReviews category="electronics" />
+          )}
+        </div>
+      </section>
     </main>
   );
 }
