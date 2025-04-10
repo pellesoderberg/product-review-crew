@@ -1,18 +1,18 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 
 // Simple in-memory cache
 const cache: Record<string, { data: any, timestamp: number }> = {};
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes in milliseconds
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
+    const searchParams = request.nextUrl.searchParams;
     const query = searchParams.get('q');
     const suggestions = searchParams.get('suggestions') === 'true';
 
     if (!query) {
-      return NextResponse.json({ error: 'Query parameter is required' }, { status: 400 });
+      return NextResponse.json({ results: [] });
     }
 
     // For suggestions, return a simplified response
@@ -20,91 +20,87 @@ export async function GET(request: Request) {
       return await getSuggestions(query);
     }
 
-    // For full search, check cache first
-    const cacheKey = `search:${query}`;
-    if (cache[cacheKey] && (Date.now() - cache[cacheKey].timestamp) < CACHE_TTL) {
-      return NextResponse.json(cache[cacheKey].data);
-    }
-
-    // Perform the full search
+    // For full search
     const { db } = await connectToDatabase();
     
-    // Use regex search for MongoDB
-    const searchRegex = new RegExp(query, 'i');
+    // Search for products
+    const productResults = await db.collection('product_reviews')
+      .find({
+        $or: [
+          { productName: { $regex: query, $options: 'i' } },
+          { shortSummary: { $regex: query, $options: 'i' } }
+        ]
+      })
+      .limit(5)
+      .toArray();
     
-    // Find products matching the query
-    const products = await db.collection('product_reviews').find({
-      $or: [
-        { productName: searchRegex },
-        { shortSummary: searchRegex },
-        { category: searchRegex }
-      ]
-    })
-    .limit(10)
-    .toArray();
+    // Add type field to product results
+    const productsWithType = productResults.map(product => ({
+      ...product,
+      type: 'product'  // Make sure this is set correctly
+    }));
     
-    // Find comparison reviews matching the query
-    const reviews = await db.collection('comparison_reviews').find({
-      $or: [
-        { reviewTitle: searchRegex },
-        { reviewSummary: searchRegex },
-        { category: searchRegex }
-      ]
-    })
-    .limit(5)
-    .toArray();
+    // Search for reviews
+    const reviewResults = await db.collection('comparison_reviews')
+      .find({
+        $or: [
+          { reviewTitle: { $regex: query, $options: 'i' } },
+          { reviewSummary: { $regex: query, $options: 'i' } },
+          { category: { $regex: query, $options: 'i' } }
+        ]
+      })
+      .limit(5)
+      .toArray();
     
-    const responseData = { products, reviews };
+    // Add type field to review results
+    const reviewsWithType = reviewResults.map(review => ({
+      ...review,
+      type: 'review'
+    }));
     
-    // Store in cache
-    cache[cacheKey] = {
-      data: responseData,
-      timestamp: Date.now()
-    };
-    
-    return NextResponse.json(responseData);
+    return NextResponse.json({ results: [...productsWithType, ...reviewsWithType] });
   } catch (error) {
-    console.error('Search API error:', error);
-    return NextResponse.json({ error: 'Failed to fetch data' }, { status: 500 });
+    console.error('Search error:', error);
+    return NextResponse.json({ results: [] });
   }
 }
 
 async function getSuggestions(query: string) {
   try {
     const { db } = await connectToDatabase();
-    const searchRegex = new RegExp(`${query}`, 'i'); // Changed from ^${query} to match anywhere in the text
     
-    // Get product name suggestions from product_reviews collection
-    const productSuggestions = await db.collection('product_reviews')
-      .find({ productName: searchRegex })
-      .project({ productName: 1 })
+    // Get product suggestions
+    const productResults = await db.collection('product_reviews')
+      .find({ 
+        productName: { $regex: query, $options: 'i' } 
+      })
       .limit(3)
       .toArray();
     
-    // Get review title suggestions from comparison_reviews collection
-    const reviewSuggestions = await db.collection('comparison_reviews')
-      .find({ reviewTitle: searchRegex })
-      .project({ reviewTitle: 1 })
+    // Get review suggestions
+    const reviewResults = await db.collection('comparison_reviews')
+      .find({ 
+        reviewTitle: { $regex: query, $options: 'i' } 
+      })
       .limit(3)
       .toArray();
     
-    // Format suggestions to match the expected interface
-    const formattedSuggestions = [
-      ...productSuggestions.map(p => ({ 
-        text: p.productName, 
-        type: 'PRODUCT' 
-      })),
-      ...reviewSuggestions.map(r => ({ 
-        text: r.reviewTitle, 
-        type: 'REVIEW' 
-      }))
-    ];
+    // Format with type field - ensure 'product' is lowercase to match the check in SearchSuggestions
+    const productsWithType = productResults.map(product => ({
+      ...product,
+      type: 'product'
+    }));
     
-    return NextResponse.json({
-      suggestions: formattedSuggestions
+    const reviewsWithType = reviewResults.map(review => ({
+      ...review,
+      type: 'review'
+    }));
+    
+    return NextResponse.json({ 
+      results: [...productsWithType, ...reviewsWithType] 
     });
   } catch (error) {
     console.error('Suggestion error:', error);
-    return NextResponse.json({ suggestions: [] });
+    return NextResponse.json({ results: [] });
   }
 }

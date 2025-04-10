@@ -3,7 +3,9 @@ import { Inter, Kanit } from 'next/font/google';
 import Link from 'next/link';
 import SearchBar from '@/components/SearchBar/SearchBar';
 import './globals.css';
+import Header from './components/Header';
 import styles from './layout.module.css';
+import Footer from '@/components/Footer/Footer';
 
 // Load the Inter font for general text
 const inter = Inter({ subsets: ['latin'] });
@@ -23,38 +25,16 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${inter.className} ${kanit.variable}`}>
-      <body>
-        <header className={styles.header}>
-          <div className={styles.headerContent}>
-            <div className={styles.logo}>
-              <Link href="/" className={styles.logoText}>PRODUCT-REVIEW-CREW</Link>
-            </div>
-            <nav className={styles.nav}>
-              <ul>
-                <li><Link href="/">Home</Link></li>
-                <li><Link href="/reviews">Reviews</Link></li>
-                <li><Link href="/about">About Us</Link></li>
-                <li><Link href="/resellers">For resellers</Link></li>
-              </ul>
-            </nav>
-          </div>
-        </header>
-        
-        <div className={styles.searchBarContainer}>
-          <SearchBar />
-        </div>
-        
-        {children}
-        
-        <footer className={styles.footer}>
-          <div className={styles.footerContent}>
-            <p>&copy; {new Date().getFullYear()} Product Review Crew. All rights reserved.</p>
-          </div>
-        </footer>
+    <html lang="en">
+      <body className="flex flex-col min-h-screen">
+        <Header />
+        <main className="flex-grow">
+          {children}
+        </main>
+        <Footer />
       </body>
     </html>
   );

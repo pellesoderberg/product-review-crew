@@ -82,3 +82,34 @@ a {
   padding: 0 1rem;
   text-align: center;
 }
+
+
+/* Add these styles to your globals.css file */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Ensure the footer stays at the bottom */
+footer {
+  margin-top: auto;
+}
+
+main {
+  flex: 1;
+}
+
+/* This ensures the footer stays at the bottom */
+footer {
+  margin-top: auto;
+}
+
+/* Rest of your CSS remains the same */

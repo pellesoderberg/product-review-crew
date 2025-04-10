@@ -1,0 +1,133 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+.header {
+    margin-bottom: 18rem;
+  }
+
+.productTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  color: #1a202c;
+}
+
+.productContent {
+  display: flex;
+  gap: 3rem;
+}
+
+.productImageContainer {
+  flex: 0 0 300px;
+  display: flex;
+  flex-direction: column;
+}
+
+.productImage {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  margin-bottom: 1rem;
+}
+
+.priceContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.price {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a202c;
+}
+
+.buyButton {
+  display: inline-block;
+  background-color: #2f855a;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 0.25rem;
+  text-align: center;
+  width: 100%;
+  transition: background-color 0.2s;
+}
+
+.buyButton:hover {
+  background-color: #276749;
+}
+
+.productDescription {
+  flex: 1;
+}
+
+.productDescription p {
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  color: #4a5568;
+}
+
+.additionalInfo {
+  background-color: #f7fafc;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.relatedReviews {
+  margin-top: 2rem;
+}
+
+.relatedReviews h3 {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  color: #1a202c;
+}
+
+.viewReviewButton {
+  background-color: #3182ce;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.viewReviewButton:hover {
+  background-color: #2c5282;
+}
+
+.backButton {
+  background-color: #3182ce;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-top: 1rem;
+}
+
+.backButton:hover {
+  background-color: #2c5282;
+}
+
+@media (max-width: 768px) {
+  .productContent {
+    flex-direction: column;
+  }
+  
+  .productImageContainer {
+    flex: 0 0 auto;
+    margin-bottom: 2rem;
+  }
+}

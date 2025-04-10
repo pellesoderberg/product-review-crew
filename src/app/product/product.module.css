@@ -1,0 +1,244 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.header {
+    margin-bottom: 18rem;
+  }
+
+.productTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  color: #1a202c;
+}
+
+.productContent {
+  display: flex;
+  gap: 3rem;
+}
+
+.productImageContainer {
+  flex: 0 0 300px;
+  display: flex;
+  flex-direction: column;
+}
+
+.productImage {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  margin-bottom: 1rem;
+}
+
+.priceContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.price {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a202c;
+}
+
+.buyButton {
+  display: inline-block;
+  background-color: #1a1a4b;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 0.25rem;
+  text-align: center;
+  width: 100%;
+  transition: background-color 0.2s;
+}
+
+.buyButton:hover {
+  background-color: #2a2a6a;
+}
+
+.productDescription {
+  flex: 1;
+}
+
+.shortSummary {
+  margin-bottom: 2rem;
+}
+
+.shortSummary p {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #000000; /* Changed to black */
+  font-weight: 500;
+}
+
+.prosConsContainer {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+  justify-content: center; /* Center the pros/cons container */
+  max-width: 800px; /* Limit the width for better readability */
+  margin-left: auto; /* Center horizontally */
+  margin-right: auto; /* Center horizontally */
+}
+
+.prosConsColumn {
+  flex: 1;
+}
+
+.proItem, .conItem {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+}
+
+.plusIcon, .minusIcon {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  margin-right: 0.5rem;
+  font-weight: bold;
+}
+
+.plusIcon {
+  background-color: #e6f7e6;
+  color: #1e4620;
+}
+
+.minusIcon {
+  background-color: #f7e6e6;
+  color: #461e1e;
+}
+
+.proContent, .conContent {
+  flex: 1;
+  color: #4a5568;
+}
+
+.compareSection {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  justify-content: center;
+  text-align: center;
+  flex-wrap: wrap;
+}
+
+.compareText {
+  color: #4a5568;
+  font-style: italic; /* Added italic style */
+}
+
+.fullReviewLink {
+  color: #1a365d;
+  text-decoration: none;
+  font-weight: 500;
+  font-style: italic; /* Added italic style */
+}
+
+.fullReviewLink:hover {
+  text-decoration: underline;
+}
+
+.reviewSection {
+  margin-bottom: 2rem;
+}
+
+.reviewSection h2 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #1a202c;
+}
+
+.reviewSection p {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #000000; /* Changed to black */
+}
+
+.relatedReviews {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.relatedReviews h3 {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  color: #1a202c;
+}
+
+.viewReviewButton {
+  background-color: #3182ce;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.viewReviewButton:hover {
+  background-color: #2c5282;
+}
+
+.backButton {
+  background-color: #3182ce;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-top: 1rem;
+}
+
+.backButton:hover {
+  background-color: #2c5282;
+}
+
+@media (max-width: 768px) {
+  .productContent {
+    flex-direction: column;
+  }
+  
+  .productImageContainer {
+    flex: 0 0 auto;
+    margin-bottom: 2rem;
+  }
+  
+  .prosConsRow {
+    flex-direction: column;
+  }
+  
+  .compareSection {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+}
+
+
+.reviewParagraph {
+  margin-bottom: 1.5rem;
+  font-size: 1rem;
+  line-height: 1.8;
+  color: #000000; /* Changed to black */
+}
+
+.reviewParagraph:last-child {
+  margin-bottom: 0;
+}
