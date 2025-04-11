@@ -67,10 +67,11 @@
 }
 
 .heroImage {
-  width: 50%;
+  width: 45%;
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-top: 10rem;
   animation: slideInFromRight 0.8s ease-out forwards;
   opacity: 0;
 }

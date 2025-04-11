@@ -147,7 +147,7 @@ export default function SearchBar() {
       <form onSubmit={handleSearch} className={styles.searchForm}>
         <input
           type="text"
-          placeholder="SEARCH REVIEW OR PRODUCT"
+          placeholder="Search review or product"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => {

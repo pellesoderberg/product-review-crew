@@ -1,9 +1,7 @@
 .container {
-  max-width: 1200px;
+  max-width: 900px;
   margin: 0 auto;
-  padding-top: 3rem;
-  padding-left: 5rem;
-  padding-right: 10rem;
+  padding: 2rem 1rem;
   padding-top: 8rem;
 }
 
@@ -14,7 +12,7 @@
 .productTitle {
   font-size: 2rem;
   font-weight: 700;
-  margin-bottom: 2rem;
+  margin-bottom: 4rem;
   color: #1a202c;
 }
 
@@ -153,9 +151,12 @@
   text-decoration: none;
   font-weight: 500;
   font-style: italic; /* Added italic style */
+  text-decoration: underline;
+
 }
 
 .fullReviewLink:hover {
+  color: #37619c;
   text-decoration: underline;
 }
 

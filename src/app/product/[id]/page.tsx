@@ -1,7 +1,7 @@
 import { connectToDatabase } from '@/lib/mongodb';
 import { ObjectId } from 'mongodb';
 import Link from 'next/link';
-import styles from './product.module.css';
+import styles from 'product.module.css';
 
 export default async function ProductPage({ params }: { params: { id: string } }) {
   const product = await getProduct(params.id);

@@ -1,11 +1,13 @@
 .header {
-  background-color: #fff;
+  background-color: rgba(255, 255, 255, 0.9);
   border-bottom: 0px solid #eaeaea;
   padding: 1rem 5rem;
   position: fixed;
   top: 0;
   z-index: 100;
   width: 100%;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
 }
 
 .container {
@@ -21,14 +23,49 @@
   font-size: 1.5rem;
   font-weight: 700;
   color: #000;
-  text-decoration: none;
-  text-transform: uppercase;
+  font-family: var(--font-kanit);
 }
 
 .searchContainer {
   margin: 0 1rem;
   width: 400px;
-  position: center;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+/* Enhanced search styling */
+.searchContainer input {
+  width: 100%;
+  padding: 0.5rem 1rem; /* Reduced from 0.75rem to 0.5rem */
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  font-size: 0.9rem;
+  background-color: rgba(255, 255, 255, 0.8);
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.searchContainer input:focus {
+  outline: none;
+  border-color: #000;
+  background-color: white;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.searchContainer button {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #555;
+  transition: color 0.2s;
+}
+
+.searchContainer button:hover {
+  color: #000;
 }
 
 .nav {

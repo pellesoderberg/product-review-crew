@@ -1,9 +1,8 @@
 .container {
-  max-width: 1200px;
+  max-width: 900px;
   margin: 0 auto;
+  padding: 2rem 1rem;
   padding-top: 8rem;
-  padding-left: 5rem;
-  padding-right: 10rem;
 }
 
 .header {
@@ -134,7 +133,7 @@
 .productDetailTitle {
   font-size: 1.5rem; /* Changed from 1.8rem to make it smaller */
   font-weight: 700;
-  margin-bottom: 2rem;
+  margin-bottom: 3.9rem;
 }
 
 .productDetailContent {
@@ -466,7 +465,7 @@
 .relatedReviewsContainer {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 2rem;
+  gap: 0rem;
   margin-top: 4rem;
   padding-top: 2rem;
   border-top: 1px solid #e0e0e0;
@@ -474,8 +473,7 @@
 
 @media (min-width: 768px) {
   .relatedReviewsContainer {
-    grid-template-columns: 1fr 1fr;
-  }
+    grid-template-columns: 1fr 0.5fr;  }
 }
 
 .relatedReviewsTitle,
@@ -496,7 +494,6 @@
 .latestReviewItem {
   margin-bottom: 1rem;
   padding-bottom: 1rem;
-  border-bottom: 1px solid #f0f0f0;
 }
 
 .relatedReviewItem:last-child,
