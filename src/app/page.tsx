@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from 'next/link';
-import SearchBar from '@/components/SearchBar/SearchBar';
-import RelatedReviews from '@/components/RelatedReviews';
+import SearchBar from './components/SearchBar/SearchBar';
+import RelatedReviews from './components/RelatedReviews';
 import styles from './page.module.css';
 import heroStyles from './hero.module.css';
 import { connectToDatabase } from '@/lib/mongodb';
@@ -62,7 +62,7 @@ export default async function Home() {
   );
 }
 
-// Helper function to get a featured product
+// Helper functions remain unchanged
 async function getFeaturedProduct() {
   try {
     const { db } = await connectToDatabase();

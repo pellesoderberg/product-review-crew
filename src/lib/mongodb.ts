@@ -1,14 +1,14 @@
 import { MongoClient } from 'mongodb';
 
-const MONGO_URI = "mongodb+srv://pellesoederberg:EEZzvlcV10QFdzd9@mongodb-cluster.rn36cgo.mongodb.net/?retryWrites=true&w=majority&appName=mongodb-cluster";
-const DATABASE_NAME = "reviews";
+const MONGO_URI = process.env.MONGODB_URI || "";
+const DATABASE_NAME = process.env.MONGODB_DB || "scraped_data";
 
 // Cache the MongoDB connection
 let cachedClient: MongoClient | null = null;
 let cachedDb: any = null;
 
 if (!MONGO_URI) {
-  throw new Error('Please define the MONGO_URI environment variable');
+  throw new Error('Please define the MONGODB_URI environment variable');
 }
 
 export async function connectToDatabase() {

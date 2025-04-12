@@ -2,8 +2,8 @@ import { connectToDatabase } from '@/lib/mongodb';
 import { ObjectId } from 'mongodb';
 import Link from 'next/link';
 import styles from '../product.module.css';
-import RelatedReviews from '@/components/RelatedReviews';
-import ProsConsBox from '@/components/ProsConsBox';
+import RelatedReviews from '@/app/components/RelatedReviews';
+import ProsConsBox from '@/app/components/ProsConsBox';
 
 // Add this function to get the review slug for a product
 async function getReviewSlugForProduct(product: any) {
