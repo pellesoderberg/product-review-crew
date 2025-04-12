@@ -1,7 +1,7 @@
 import { connectToDatabase } from '@/lib/mongodb';
 import { ObjectId } from 'mongodb';
 import Link from 'next/link';
-import styles from './product.module.css';
+import styles from 'product.module.css';
 
 export default async function ProductPage({ params }: { params: { id: string } }) {
   const product = await getProduct(params.id);
@@ -11,7 +11,7 @@ export default async function ProductPage({ params }: { params: { id: string } }
       <div className={styles.container}>
         <h1>Product not found</h1>
         <p>The product you're looking for doesn't exist or has been removed.</p>
-        <Link href="/search">
+        <Link href="/search" >
           <button className={styles.backButton}>Back to Search</button>
         </Link>
       </div>

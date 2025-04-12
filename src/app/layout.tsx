@@ -28,8 +28,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body className="flex flex-col min-h-screen">
+    <html lang="en" className={`${kanit.variable}`}>
+      <body className={`flex flex-col min-h-screen ${inter.className}`}>
         <Header />
         <main className="flex-grow">
           {children}

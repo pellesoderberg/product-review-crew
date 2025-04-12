@@ -12,10 +12,27 @@ export default function SearchBar() {
   const router = useRouter();
   const searchRef = useRef<HTMLDivElement>(null);
 
+  // Add this effect to clear search when clicking on navigation links
+  useEffect(() => {
+    const handleLinkClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      // Check if the clicked element is a link or inside a link
+      if (target.tagName === 'A' || target.closest('a')) {
+        setQuery('');
+        setSuggestions([]);
+        setShowSuggestions(false);
+      }
+    };
+
+    document.addEventListener('click', handleLinkClick);
+    return () => document.removeEventListener('click', handleLinkClick);
+  }, []);
+
   useEffect(() => {
     // Function to fetch suggestions
     const fetchSuggestions = async () => {
       if (query.length < 2) {
+        console.log('Searching for:', query.length);
         setSuggestions([]);
         return;
       }
@@ -24,6 +41,7 @@ export default function SearchBar() {
         console.log('Searching for:', query);
         
         // Search for both reviews and products
+        // Fix: Send the actual query string instead of query.length
         const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
         console.log('Response status:', response.status);
         
@@ -129,7 +147,7 @@ export default function SearchBar() {
       <form onSubmit={handleSearch} className={styles.searchForm}>
         <input
           type="text"
-          placeholder="SEARCH REVIEW OR PRODUCT"
+          placeholder="Search review or product"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => {
