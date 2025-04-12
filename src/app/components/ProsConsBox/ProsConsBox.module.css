@@ -11,12 +11,20 @@
 
 .prosConsColumn {
   flex: 1;
+  color:#000000;
+  font-weight: normal;
+  text-align: left;
 }
 
 .prosList, .consList {
   padding-left: 0;
   margin-bottom: 0;
+  margin-top: 15;
   list-style: none;
+  font-weight: normal;
+  text-align: left;
+
+
 }
 
 .proItem, .conItem {

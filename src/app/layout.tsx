@@ -1,11 +1,10 @@
 import type { Metadata } from 'next';
 import { Inter, Kanit } from 'next/font/google';
 import Link from 'next/link';
-import SearchBar from '@/components/SearchBar/SearchBar';
+import SearchBar from './components/SearchBar/SearchBar';
 import './globals.css';
 import Header from './components/Header';
-import styles from './layout.module.css';
-import Footer from '@/components/Footer/Footer';
+import Footer from './components/Footer/Footer';
 
 // Load the Inter font for general text
 const inter = Inter({ subsets: ['latin'] });
