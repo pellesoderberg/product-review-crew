@@ -1,7 +1,7 @@
 import { MongoClient } from 'mongodb';
 
 const MONGO_URI = process.env.MONGODB_URI || "";
-const DATABASE_NAME = process.env.MONGODB_DB || "scraped_data";
+const DATABASE_NAME = process.env.MONGODB_DB || "reviews";
 
 // Cache the MongoDB connection
 let cachedClient: MongoClient | null = null;
