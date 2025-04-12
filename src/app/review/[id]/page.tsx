@@ -6,74 +6,158 @@ import styles from './review.module.css';
 import { redirect } from 'next/navigation';
 import ProsConsBox from '@/components/ProsConsBox';
 
-// Define the params type
+// Define proper types for the data structures
+interface Product {
+  _id: string | ObjectId;
+  productName: string;
+  image: string;
+  priceRange?: string;
+  price?: string;
+  shortSummary?: string;
+  link?: string;
+  affiliateLink?: string;
+  award?: string;
+  ranking?: number;
+  category?: string;
+  pros?: string[];
+  cons?: string[];
+  review?: string;
+  reviewText?: string;
+}
+
+interface Review {
+  _id: string | ObjectId;
+  slug?: string;
+  reviewTitle: string;
+  reviewSummary: string;
+  category: string;
+  comparisonReview?: string;
+  products?: Array<{ productId: string }>;
+  createdAt?: Date;
+}
+
+// Update the params type to be a Promise only
 type ReviewPageParams = {
-  params: Promise<{
-    id: string;
-  }> | {
-    id: string;
-  };
+  params: Promise<{ id: string }>
 };
 
 // Update the getReviewData function to better handle different ID formats
 async function getReviewData(id: string) {
-  const { db } = await connectToDatabase();
+    // Add null check for the database connection
+    const connection = await connectToDatabase();
+    
+    if (!connection || !connection.db) {
+      console.error('Database connection failed');
+      return null;
+    }
+    
+    const { db } = connection;
   
   try {
-    let review;
+    let reviewDoc = null;
     
     // First, try to find by exact slug match
-    review = await db.collection('comparison_reviews').findOne({ slug: id });
+    reviewDoc = await db.collection('comparison_reviews').findOne({ slug: id });
     
     // If not found by slug, try to find by partial slug match
-    if (!review) {
-      review = await db.collection('comparison_reviews').findOne({
+    if (!reviewDoc) {
+      reviewDoc = await db.collection('comparison_reviews').findOne({
         slug: { $regex: new RegExp(id, 'i') }
       });
     }
     
     // If still not found and it's a valid ObjectId, try by ID
-    if (!review && ObjectId.isValid(id)) {
+    if (!reviewDoc && ObjectId.isValid(id)) {
       const objectId = new ObjectId(id);
-      review = await db.collection('comparison_reviews').findOne({ _id: objectId });
+      reviewDoc = await db.collection('comparison_reviews').findOne({ _id: objectId });
       
       // If found by ID but has a slug, redirect to the slug URL for SEO
-      if (review && review.slug) {
-        return { redirect: `/review/${review.slug}` };
+      if (reviewDoc && reviewDoc.slug) {
+        return { redirect: `/review/${reviewDoc.slug}` };
       }
     }
     
     // If still not found, try to find by category
-    if (!review) {
+    if (!reviewDoc) {
       // Try to extract a category from the ID string
       const possibleCategory = id.replace(/^best-|-compared$/g, '').replace(/-/g, ' ');
-      review = await db.collection('comparison_reviews').findOne({
+      reviewDoc = await db.collection('comparison_reviews').findOne({
         category: { $regex: new RegExp(possibleCategory, 'i') }
       });
     }
     
-    if (!review) {
+    if (!reviewDoc) {
       return null;
     }
     
+    // Convert MongoDB document to Review interface
+    const review: Review = {
+      _id: reviewDoc._id,
+      slug: reviewDoc.slug,
+      reviewTitle: reviewDoc.reviewTitle || 'Untitled Review',
+      reviewSummary: reviewDoc.reviewSummary || 'No summary available',
+      category: reviewDoc.category || 'Uncategorized',
+      comparisonReview: reviewDoc.comparisonReview,
+      products: reviewDoc.products,
+      createdAt: reviewDoc.createdAt
+    };
+    
     // Fetch the products referenced in the review or directly from product_reviews
-    let products = [];
+    let products: Product[] = [];
     
     if (review.products && Array.isArray(review.products)) {
-      const productIds = review.products.map((p: any) => new ObjectId(p.productId));
-      products = await db.collection('product_reviews')
+      const productIds = review.products.map((p) => new ObjectId(p.productId));
+      const productDocs = await db.collection('product_reviews')
         .find({ _id: { $in: productIds } })
         .toArray();
+        
+      // Map MongoDB documents to Product interface
+      products = productDocs.map(doc => ({
+        _id: doc._id,
+        productName: doc.productName || 'Unknown Product',
+        image: doc.image || '/placeholder.jpg',
+        priceRange: doc.priceRange,
+        price: doc.price,
+        shortSummary: doc.shortSummary,
+        link: doc.link,
+        affiliateLink: doc.affiliateLink,
+        award: doc.award,
+        ranking: doc.ranking,
+        category: doc.category,
+        pros: doc.pros,
+        cons: doc.cons,
+        review: doc.review,
+        reviewText: doc.reviewText
+      }));
     } else {
       // If no products array in review, try to find products by category
-      products = await db.collection('product_reviews')
+      const productDocs = await db.collection('product_reviews')
         .find({ category: review.category })
         .limit(3)
         .toArray();
+        
+      // Map MongoDB documents to Product interface
+      products = productDocs.map(doc => ({
+        _id: doc._id,
+        productName: doc.productName || 'Unknown Product',
+        image: doc.image || '/placeholder.jpg',
+        priceRange: doc.priceRange,
+        price: doc.price,
+        shortSummary: doc.shortSummary,
+        link: doc.link,
+        affiliateLink: doc.affiliateLink,
+        award: doc.award,
+        ranking: doc.ranking,
+        category: doc.category,
+        pros: doc.pros,
+        cons: doc.cons,
+        review: doc.review,
+        reviewText: doc.reviewText
+      }));
     }
     
     // Sort products by ranking
-    products.sort((a: any, b: any) => (a.ranking || 999) - (b.ranking || 999));
+    products.sort((a: Product, b: Product) => (a.ranking || 999) - (b.ranking || 999));
     
     return { review, products };
   } catch (error) {
@@ -82,19 +166,26 @@ async function getReviewData(id: string) {
   }
 }
 
+// In the ReviewPage component, update the redirect check
 export default async function ReviewPage({ params }: ReviewPageParams) {
-  // Await params if it's a Promise
-  const resolvedParams = 'then' in params ? await params : params;
-  const id = resolvedParams?.id || '';
+  // Await the params to get the id
+  const resolvedParams = await params;
+  const id = resolvedParams.id;
+  
   const data = await getReviewData(id);
   
   // Handle redirects for SEO
-  if (data && 'redirect' in data) {
+  if (data && 'redirect' in data && typeof data.redirect === 'string') {
     redirect(data.redirect);
   }
   
   if (!data) {
     return <div className={styles.container}>Review not found</div>;
+  }
+  
+  // Add a type guard to check if data has review and products properties
+  if (!('review' in data)) {
+    return <div className={styles.container}>Invalid review data</div>;
   }
   
   const { review, products } = data;
@@ -117,8 +208,8 @@ export default async function ReviewPage({ params }: ReviewPageParams) {
       </header>
       
       <section className={styles.productsGrid}>
-        {products.slice(0, 3).map((product: any, index: number) => (
-          <div key={product._id} className={styles.productCard}>
+        {products.slice(0, 3).map((product: Product, index: number) => (
+          <div key={product._id.toString()} className={styles.productCard}>
             <div 
               className={styles.awardBanner} 
               style={{ backgroundColor: bannerColors[index] }}
@@ -154,7 +245,7 @@ export default async function ReviewPage({ params }: ReviewPageParams) {
       {/* Add comparison review section */}
       {review.comparisonReview && (
         <div className={styles.comparisonText}>
-          <h2 className={styles.sectionTitle}>Product-review-crew's comparison</h2>
+          <h2 className={styles.sectionTitle}>Product-review-crew&apos;s comparison</h2>
           {typeof review.comparisonReview === 'string' ? (
             <div dangerouslySetInnerHTML={{ 
               __html: formatReviewText(review.comparisonReview) 
@@ -166,9 +257,9 @@ export default async function ReviewPage({ params }: ReviewPageParams) {
       )}
       
       <section className={styles.detailedReview}>
-        {products.map((product: any, index: number) => (
+        {products.map((product: Product, index: number) => (
           <div 
-            key={product._id} 
+            key={product._id.toString()} 
             className={styles.productDetail}
             id={`product-${product._id}`}
           >
@@ -265,13 +356,21 @@ export default async function ReviewPage({ params }: ReviewPageParams) {
 }
 
 // Helper function to get related reviews in the same category
-async function getRelatedReviews(category: string, currentReviewId: string, limit = 3) {
+async function getRelatedReviews(category: string, currentReviewId: string, limit = 3): Promise<Review[]> {
   try {
-    const { db } = await connectToDatabase();
+    // Add null check for the database connection
+    const connection = await connectToDatabase();
+    
+    if (!connection || !connection.db) {
+      console.error('Database connection failed');
+      return []; // Return empty array instead of null
+    }
+    
+    const { db } = connection;
     
     console.log(`Fetching related reviews for category: ${category}, excluding review: ${currentReviewId}`);
     
-    const relatedReviews = await db.collection('comparison_reviews')
+    const relatedReviewDocs = await db.collection('comparison_reviews')
       .find({ 
         category: category,
         _id: { $ne: new ObjectId(currentReviewId) }
@@ -279,7 +378,19 @@ async function getRelatedReviews(category: string, currentReviewId: string, limi
       .limit(limit)
       .toArray();
       
-    console.log(`Found ${relatedReviews.length} related reviews`);
+    console.log(`Found ${relatedReviewDocs.length} related reviews`);
+    
+    // Map MongoDB documents to Review interface
+    const relatedReviews: Review[] = relatedReviewDocs.map(doc => ({
+      _id: doc._id,
+      slug: doc.slug,
+      reviewTitle: doc.reviewTitle || 'Untitled Review',
+      reviewSummary: doc.reviewSummary || 'No summary available',
+      category: doc.category || 'Uncategorized',
+      comparisonReview: doc.comparisonReview,
+      products: doc.products,
+      createdAt: doc.createdAt
+    }));
     
     // Log the titles to debug
     relatedReviews.forEach((review, index) => {
@@ -294,13 +405,21 @@ async function getRelatedReviews(category: string, currentReviewId: string, limi
 }
 
 // Helper function to get latest reviews from different categories
-async function getLatestReviews(excludeCategory: string, limit = 3) {
+async function getLatestReviews(excludeCategory: string, limit = 3): Promise<Review[]> {
   try {
-    const { db } = await connectToDatabase();
+    // Add null check for the database connection
+    const connection = await connectToDatabase();
+    
+    if (!connection || !connection.db) {
+      console.error('Database connection failed');
+      return []; // Return empty array instead of null
+    }
+    
+    const { db } = connection;
     
     console.log(`Fetching latest reviews excluding category: ${excludeCategory}`);
     
-    const latestReviews = await db.collection('comparison_reviews')
+    const latestReviewDocs = await db.collection('comparison_reviews')
       .find({ 
         category: { $ne: excludeCategory }
       })
@@ -308,7 +427,19 @@ async function getLatestReviews(excludeCategory: string, limit = 3) {
       .limit(limit)
       .toArray();
       
-    console.log(`Found ${latestReviews.length} latest reviews`);
+    console.log(`Found ${latestReviewDocs.length} latest reviews`);
+    
+    // Map MongoDB documents to Review interface
+    const latestReviews: Review[] = latestReviewDocs.map(doc => ({
+      _id: doc._id,
+      slug: doc.slug,
+      reviewTitle: doc.reviewTitle || 'Untitled Review',
+      reviewSummary: doc.reviewSummary || 'No summary available',
+      category: doc.category || 'Uncategorized',
+      comparisonReview: doc.comparisonReview,
+      products: doc.products,
+      createdAt: doc.createdAt
+    }));
     
     // Log the titles to debug
     latestReviews.forEach((review, index) => {
@@ -381,43 +512,53 @@ function formatProductReviewText(text: string): string {
   return `<p>${firstParagraph.trim()}</p><p>${secondParagraph.trim()}</p>`;
 }
 
-// Add at the top of the file, after imports
-
 // Generate static pages for all reviews
+// Fix the generateStaticParams function to return the correct type
 export async function generateStaticParams() {
-  const { db } = await connectToDatabase();
-  
-  // Get all reviews that have slugs
-  const reviews = await db.collection('comparison_reviews')
-    .find({ slug: { $exists: true } })
-    .project({ slug: 1, _id: 1 })
-    .toArray();
-  
-  // Return an array of id params
-  return reviews.map((review) => ({
-    id: review.slug || review._id.toString(),
-  }));
+  try {
+    const connection = await connectToDatabase();
+    
+    if (!connection || !connection.db) {
+      console.error('Database connection failed');
+      return []; // Return empty array instead of null
+    }
+    
+    const { db } = connection;
+    
+    const reviews = await db.collection('comparison_reviews')
+      .find({})
+      .limit(20) // Limit to a reasonable number for static generation
+      .toArray();
+    
+    // Format the params correctly
+    return reviews.map(review => ({
+      id: review._id.toString()
+    }));
+  } catch (error) {
+    console.error('Error generating static params:', error);
+    return []; // Return empty array instead of null
+  }
 }
 
-// Add metadata for better SEO
-// Fix the metadata function to properly await params
-export async function generateMetadata({ params }: { params: { id: string } | Promise<{ id: string }> }) {
-// Await params if it's a Promise
-const resolvedParams = 'then' in params ? await params : params;
-const id = resolvedParams.id;
-const data = await getReviewData(id);
+// Update metadata function to use Promise type
+export async function generateMetadata({ params }: ReviewPageParams) {
+  // Await params to get the id
+  const resolvedParams = await params;
+  const id = resolvedParams.id;
+  
+  const data = await getReviewData(id);
 
-if (!data || 'redirect' in data) {
-return {
-title: 'Review Not Found',
-description: 'The review you are looking for could not be found.',
-};
-}
+  if (!data || 'redirect' in data) {
+    return {
+      title: 'Review Not Found',
+      description: 'The review you are looking for could not be found.',
+    };
+  }
 
-const { review } = data;
+  const { review } = data;
 
-return {
-title: review.reviewTitle || 'Product Comparison Review',
-description: review.reviewSummary || 'Detailed comparison of top products',
-};
+  return {
+    title: review.reviewTitle || 'Product Comparison Review',
+    description: review.reviewSummary || 'Detailed comparison of top products',
+  };
 }

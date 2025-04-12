@@ -1,89 +1,123 @@
-'use client';
+import React from 'react';
+import Image from 'next/image';
+// Removed unused Link import
+import { connectToDatabase } from '@/lib/mongodb';
+import styles from './ReviewContent.module.css';
+import { Document, WithId, ObjectId } from 'mongodb';
 
-import React, { useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
-import Link from 'next/link';
-
-interface ReviewContentProps {
-  review: any;
+// Define proper types for the data structures
+interface Product {
+  _id: string;
+  productName: string;
+  image: string;
+  price?: string;
+  shortSummary?: string;
+  award?: string;
 }
 
-export default function ReviewContent({ review }: ReviewContentProps) {
-  const searchParams = useSearchParams();
+interface ReviewContentProps {
+  reviewId: string;
+  // Removed unused searchParams
+}
+
+export default async function ReviewContent({ reviewId }: ReviewContentProps) {
+  const reviewData = await getReviewData(reviewId);
   
-  useEffect(() => {
-    // Check if there's a hash in the URL to scroll to a specific product
-    const hash = window.location.hash;
-    if (hash) {
-      const element = document.getElementById(hash.substring(1));
-      if (element) {
-        // Scroll to the element with a slight delay to ensure rendering is complete
-        setTimeout(() => {
-          element.scrollIntoView({ behavior: 'smooth' });
-        }, 100);
-      }
-    }
-  }, []);
+  if (!reviewData) {
+    return <div>Review not found</div>;
+  }
+  
+  const { review, products } = reviewData;
   
   return (
-    <div className="container mx-auto py-8 px-4">
-      <h1 className="text-3xl font-bold mb-6">{review.reviewTitle}</h1>
+    <div className={styles.reviewContent}>
+      <h1 className={styles.reviewTitle}>{review.title}</h1>
+      <p className={styles.reviewSummary}>{review.summary}</p>
       
-      {/* Review summary */}
-      {review.reviewSummary && (
-        <div className="bg-gray-50 p-4 rounded-lg mb-8">
-          <h2 className="text-xl font-semibold mb-2">Summary</h2>
-          <p>{review.reviewSummary}</p>
-        </div>
-      )}
-      
-      {/* Main review content */}
-      <div className="prose max-w-none mb-10">
-        {review.comparisonReview && (
-          <div dangerouslySetInnerHTML={{ __html: review.comparisonReview.replace(/\n/g, '<br />') }} />
-        )}
+      <div className={styles.productsGrid}>
+        {/* Cast products to Product[] to fix the type error */}
+        {(products as Product[]).map((product: Product, index: number) => (
+          <div key={product._id} className={styles.productCard}>
+            <div className={styles.productRank}>#{index + 1}</div>
+            <h2 className={styles.productName}>{product.productName}</h2>
+            <div className={styles.productImageContainer}>
+              <Image 
+                src={product.image} 
+                alt={product.productName}
+                width={200}
+                height={200}
+                className={styles.productImage}
+              />
+            </div>
+            <div className={styles.productInfo}>
+              <div className={styles.productPrice}>{product.price || '$399'}</div>
+              <div className={styles.productAward}>{product.award || 'Best Choice'}</div>
+              <p className={styles.productSummary}>{product.shortSummary || 'No summary available'}</p>
+            </div>
+          </div>
+        ))}
       </div>
       
-      {/* Products section */}
-      {review.productDetails && review.productDetails.length > 0 && (
-        <div className="mt-12">
-          <h2 className="text-2xl font-bold mb-6">Featured Products</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {review.productDetails.map((product: any) => (
-              <div 
-                key={product._id} 
-                id={`product-${product._id}`} 
-                className="border rounded-lg p-4 hover:shadow-lg transition-shadow"
-              >
-                <h3 className="text-xl font-semibold mb-2">{product.productName}</h3>
-                {product.imageUrl && (
-                  <img 
-                    src={product.imageUrl} 
-                    alt={product.productName} 
-                    className="w-full h-48 object-contain mb-4"
-                  />
-                )}
-                <p className="text-gray-700 mb-4">{product.description}</p>
-                <div className="flex justify-between items-center">
-                  {product.price && (
-                    <span className="font-bold text-lg">${product.price}</span>
-                  )}
-                  {product.affiliateLink && (
-                    <a 
-                      href={product.affiliateLink} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-                    >
-                      Check Price
-                    </a>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      <div className={styles.reviewText}>
+        {review.content}
+      </div>
     </div>
   );
+}
+
+// In the getReviewData function, we need to add a null check for the database connection
+// In the getReviewData function, we need to properly type our query objects
+async function getReviewData(reviewId: string) {
+  try {
+    const connection = await connectToDatabase();
+    
+    if (!connection || !connection.db) {
+      console.error('Database connection failed');
+      return null;
+    }
+    
+    const { db } = connection;
+    
+    // Convert string ID to ObjectId if it's a valid ObjectId format
+    const query: { _id?: ObjectId; stringId?: string } = {};
+    if (ObjectId.isValid(reviewId)) {
+      query._id = new ObjectId(reviewId);
+    } else {
+      // If not a valid ObjectId, try to find by a string ID field or another identifier
+      query.stringId = reviewId; // Adjust this based on your schema
+    }
+    
+    const review = await db.collection('reviews').findOne(query);
+    
+    if (!review) {
+      return null;
+    }
+    
+    // Fetch the products referenced in the review
+    const productQuery: { reviewId?: ObjectId; reviewStringId?: string } = {};
+    if (ObjectId.isValid(reviewId)) {
+      productQuery.reviewId = new ObjectId(reviewId);
+    } else {
+      productQuery.reviewStringId = reviewId; // Adjust based on your schema
+    }
+    
+    const productDocs = await db.collection('products')
+      .find(productQuery)
+      .toArray();
+    
+    // Map MongoDB documents to Product interface
+    const products: Product[] = productDocs.map((doc: WithId<Document>) => ({
+      _id: doc._id.toString(),
+      productName: doc.productName || 'Unknown Product',
+      image: doc.image || '/placeholder.jpg',
+      price: doc.price,
+      shortSummary: doc.shortSummary,
+      award: doc.award
+    }));
+    
+    return { review, products };
+  } catch (error) {
+    console.error('Error fetching review data:', error);
+    return null;
+  }
 }

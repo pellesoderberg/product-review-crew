@@ -1,64 +1,72 @@
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+'use client';
+
+//import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import styles from './SearchSuggestions.module.css';
+
+// Define proper interfaces for the component props and suggestion items
+interface SearchItem {
+  _id: string;
+  title: string;
+  type: 'review' | 'product';
+  slug?: string;
+  image?: string;
+  category?: string;
+  award?: string;
+}
+
+interface SearchSuggestionsProps {
+  suggestions: SearchItem[];
+  onSelect: (item: SearchItem) => void;
+  query: string;
+}
 
 export default function SearchSuggestions({ 
   suggestions, 
-  onSuggestionClick,
-  visible 
-}: {
-  suggestions: any[];
-  onSuggestionClick: (suggestion: any) => void;
-  visible: boolean;
-}) {
-  const router = useRouter();
+  onSelect, 
+  query 
+}: SearchSuggestionsProps) {
+  //const router = useRouter();
 
-  if (!visible || !suggestions.length) {
+  if (!suggestions || suggestions.length === 0) {
     return null;
   }
 
-  // Let's update the handleSuggestionClick function to ensure proper routing
-  const handleSuggestionClick = (suggestion: any) => {
-    // Call the parent's click handler to close the suggestions
-    onSuggestionClick(suggestion);
-    
-    // For products, redirect to a dedicated product page
-    if (suggestion.type === 'product') {
-      router.push(`/product/${suggestion._id}`);
-    } else if (suggestion.type === 'review') {
-      // Direct navigation to review page
-      router.push(`/review/${suggestion.slug || suggestion._id}`);
-    }
-  };
-
   return (
-    <div className="absolute z-10 w-full bg-white border border-gray-300 mt-1 rounded-md shadow-lg max-h-80 overflow-y-auto">
-      <ul className="py-1">
-        {suggestions.map((suggestion) => (
-          <li 
-            key={suggestion._id} 
-            className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-            onClick={() => handleSuggestionClick(suggestion)}
-          >
-            <div className="flex items-center">
-              {suggestion.image && (
-                <img 
-                  src={suggestion.image} 
-                  alt={suggestion.productName || suggestion.reviewTitle} 
-                  className="w-10 h-10 object-cover mr-3"
-                />
-              )}
-              <div>
-                <div className="font-medium">
-                  {suggestion.productName || suggestion.reviewTitle}
-                </div>
-                <div className="text-sm text-gray-500">
-                  {suggestion.type === 'product' ? 'Product' : 'Review'}
-                </div>
-              </div>
+    <div className={styles.suggestionsContainer}>
+      {suggestions.map((item, index) => (
+        <div 
+          key={index} 
+          className={styles.suggestionItem}
+          onClick={() => onSelect(item)}
+        >
+          {item.image && (
+            <div className={styles.imageContainer}>
+              <Image 
+                src={item.image} 
+                alt={item.title}
+                width={40}
+                height={40}
+                className={styles.suggestionImage}
+              />
             </div>
-          </li>
-        ))}
-      </ul>
+          )}
+          
+          <div className={styles.suggestionContent}>
+            <div className={styles.suggestionTitle}>
+              {item.title || query}
+            </div>
+            {item.category && (
+              <div className={styles.suggestionCategory}>
+                {item.category}
+              </div>
+            )}
+            <div className={styles.suggestionType}>
+              {item.type === 'product' ? 'Product' : 'Review'}
+            </div>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }

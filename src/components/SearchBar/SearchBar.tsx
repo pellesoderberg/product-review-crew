@@ -2,12 +2,29 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+// Removed unused Link import
 import styles from './SearchBar.module.css';
+
+// Define interfaces for the search results
+interface SearchItem {
+  _id: string;
+  title: string;
+  type: 'review' | 'product';
+  slug?: string;
+  award?: string;
+}
+
+interface ProductItem {
+  _id: string | { $oid: string };
+  productName?: string;
+  name?: string;
+  slug?: string;
+  award?: string;
+}
 
 export default function SearchBar() {
   const [query, setQuery] = useState('');
-  const [suggestions, setSuggestions] = useState<any[]>([]);
+  const [suggestions, setSuggestions] = useState<SearchItem[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const router = useRouter();
   const searchRef = useRef<HTMLDivElement>(null);
@@ -67,28 +84,39 @@ export default function SearchBar() {
           if (data.reviews && Array.isArray(data.reviews)) {
             reviewsArray = data.reviews;
           } else if (data.results && Array.isArray(data.results)) {
-            reviewsArray = data.results.filter((item: any) => item.reviewTitle);
+            reviewsArray = data.results.filter((item: { reviewTitle?: string }) => item.reviewTitle);
           }
           
           if (data.products && Array.isArray(data.products)) {
             productsArray = data.products;
           } else if (data.results && Array.isArray(data.results)) {
-            productsArray = data.results.filter((item: any) => item.productName);
+            productsArray = data.results.filter((item: { productName?: string }) => item.productName);
           }
         }
         
-        // Format reviews
-        const formattedReviews = reviewsArray.map(item => ({
-          _id: item._id?.$oid || item._id,
+        // Define an interface for the review items
+        interface ReviewItem {
+          _id: string | { $oid: string };
+          reviewTitle?: string;
+          title?: string;
+        }
+        
+        // Format reviews with proper typing
+        const formattedReviews = reviewsArray.map((item: ReviewItem) => ({
+          _id: typeof item._id === 'object' && item._id !== null && '$oid' in item._id 
+            ? item._id.$oid 
+            : item._id,
           title: item.reviewTitle || item.title,
-          type: 'review'
+          type: 'review' as const
         }));
         
         // Format products
-        const formattedProducts = productsArray.map(item => ({
-          _id: item._id?.$oid || item._id,
+        const formattedProducts = productsArray.map((item: ProductItem) => ({
+          _id: typeof item._id === 'object' && item._id !== null && '$oid' in item._id
+          ? item._id.$oid
+          : item._id,
           title: item.productName || item.name,
-          type: 'product',
+          type: 'product' as const,
           slug: item.slug || item.productName?.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') || '',
           award: item.award // Make sure to include the award field
         }));

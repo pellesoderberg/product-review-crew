@@ -12,7 +12,14 @@ export async function GET(request: NextRequest) {
   
   try {
     // Connect to MongoDB
-    const { db } = await connectToDatabase();
+        // Fix: Add null check for the database connection
+        const connection = await connectToDatabase();
+    
+        if (!connection || !connection.db) {
+          return NextResponse.json({ error: 'Database connection failed' }, { status: 500 });
+        }
+        
+        const { db } = connection;
     
     console.log("Finding review for product:", productId);
     
