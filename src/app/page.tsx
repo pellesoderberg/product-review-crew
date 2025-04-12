@@ -51,7 +51,6 @@ export default async function Home() {
       {/* Add RelatedReviews component at the bottom */}
       <section className={styles.relatedReviewsSection}>
         <div className={styles.container}>
-          <h2 className={styles.sectionTitle}>Explore Our Reviews</h2>
           {featuredProduct && featuredProduct.category ? (
             <RelatedReviews category={featuredProduct.category} />
           ) : (

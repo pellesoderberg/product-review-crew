@@ -17,8 +17,7 @@ export default async function RelatedReviews({ category, currentId }: RelatedRev
     <div className={styles.relatedReviewsContainer}>
       <div className={styles.relatedReviewsSection}>
         <h2 className={styles.relatedReviewsTitle}>
-          OTHER REVIEWS IN CATEGORY:<br />
-          {category.toUpperCase()}
+          OTHER REVIEWS IN CATEGORY {category.toUpperCase()}
         </h2>
         <ul className={styles.relatedReviewsList}>
           {relatedReviews.length > 0 ? (

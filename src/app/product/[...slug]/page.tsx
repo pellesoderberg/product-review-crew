@@ -139,12 +139,10 @@ export default async function ProductPage({ params }: { params: { slug: string[]
           {/* Replace the existing pros/cons container with ProsConsBox */}
           <ProsConsBox pros={product.pros || []} cons={product.cons || []} />
           
-          <div className={styles.compareSection}>
-            <span className={styles.compareText}>See this product compared to similar products</span>
-            <Link 
+          <div className={styles.compareSection}>            <Link 
               href={`/review/${reviewSlug}`} 
               className={styles.fullReviewLink}>
-              See full review
+              See this product compared to similar products
             </Link>
           </div>
           

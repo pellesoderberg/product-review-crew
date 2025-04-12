@@ -1,6 +1,6 @@
 .prosConsContainer {
   display: flex;
-  gap: 0rem;
+  gap: 2rem;
   margin-bottom: 2rem;
   margin-top: 2.2rem;;
   justify-content: center; /* Center the pros/cons container */

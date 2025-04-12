@@ -12,27 +12,19 @@ export default async function SearchPage({
   const resolvedParams = 'then' in searchParams ? await searchParams : searchParams;
   const query = resolvedParams.q || '';
   
-  // If no query, show empty search page
-  if (!query) {
-    return (
-      <div className={styles.container}>
-        <h1 className={styles.title}>Search Results</h1>
-        <p className={styles.noResults}>Please enter a search term to find reviews and products.</p>
-      </div>
-    );
-  }
-
-  // Get search results
+  // Get search results or all items if no query
   const { reviews, products } = await getSearchResults(query);
   
   const hasResults = reviews.length > 0 || products.length > 0;
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Search Results for "{query}"</h1>
+      <h1 className={styles.title}>
+        {query ? `Search Results for "${query}"` : 'All Reviews and Products'}
+      </h1>
       
       {!hasResults && (
-        <p className={styles.noResults}>No results found for "{query}". Try a different search term.</p>
+        <p className={styles.noResults}>No results found. Try a different search term.</p>
       )}
       
       {reviews.length > 0 && (
@@ -46,7 +38,12 @@ export default async function SearchPage({
                 className={styles.reviewCard}
               >
                 <h3 className={styles.reviewTitle}>{review.reviewTitle}</h3>
-                <p className={styles.reviewSummary}>{review.reviewSummary}</p>
+                <p className={styles.reviewSummary}>
+                  {/* Truncate the summary to 10 words */}
+                  {review.reviewSummary 
+                    ? review.reviewSummary.split(' ').slice(0, 20).join(' ') + (review.reviewSummary.split(' ').length > 10 ? '...' : '')
+                    : 'No summary available'}
+                </p>
                 <span className={styles.viewReview}>View Review →</span>
               </Link>
             ))}
@@ -95,26 +92,41 @@ async function getSearchResults(query: string) {
   try {
     const { db } = await connectToDatabase();
     
-    // Create a case-insensitive regex for the search
-    const searchRegex = new RegExp(query, 'i');
-    
-    // Search for reviews - only match reviewTitle
-    const reviews = await db.collection('comparison_reviews')
-      .find({
-        reviewTitle: searchRegex
-      })
-      .limit(10)
-      .toArray();
-    
-    // Search for products - only match productName
-    const products = await db.collection('product_reviews')
-      .find({
-        productName: searchRegex
-      })
-      .limit(10)
-      .toArray();
-    
-    return { reviews, products };
+    if (query) {
+      // Create a case-insensitive regex for the search
+      const searchRegex = new RegExp(query, 'i');
+      
+      // Search for reviews - only match reviewTitle
+      const reviews = await db.collection('comparison_reviews')
+        .find({
+          reviewTitle: searchRegex
+        })
+        .limit(10)
+        .toArray();
+      
+      // Search for products - only match productName
+      const products = await db.collection('product_reviews')
+        .find({
+          productName: searchRegex
+        })
+        .limit(10)
+        .toArray();
+      
+      return { reviews, products };
+    } else {
+      // If no query, return all reviews and products
+      const reviews = await db.collection('comparison_reviews')
+        .find({})
+        .limit(20)
+        .toArray();
+      
+      const products = await db.collection('product_reviews')
+        .find({})
+        .limit(20)
+        .toArray();
+      
+      return { reviews, products };
+    }
   } catch (error) {
     console.error('Error searching:', error);
     return { reviews: [], products: [] };
