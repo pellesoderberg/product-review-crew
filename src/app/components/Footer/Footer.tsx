@@ -2,7 +2,6 @@ import Link from 'next/link';
 import styles from './Footer.module.css';
 import heroStyles from '../Hero/hero.module.css';
 
-
 export default function Footer() {
   const currentYear = new Date().getFullYear();
   

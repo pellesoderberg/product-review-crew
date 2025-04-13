@@ -196,8 +196,7 @@ export default async function ReviewPage({ params }: ReviewPageParams) {
   // Fetch latest reviews from different categories
   const latestReviews = await getLatestReviews(review.category);
   
-  // Define award types and colors for the top 3 products
-  const awards = ["BEST OVERALL", "BEST AFFORDABLE", "BEST PREMIUM"];
+  // Define banner colors for the top 3 products
   const bannerColors = ["#1e4620", "#1a1a4b", "#5c5c1e"];
   
   return (
@@ -215,7 +214,9 @@ export default async function ReviewPage({ params }: ReviewPageParams) {
               style={{ backgroundColor: bannerColors[index] }}
             >
               <span className={styles.number}>{index + 1}</span> 
-              <span>{awards[index] || product.award || `BEST CHOICE`}</span>
+              <span className={styles.awardText}>
+                {product.award || (index === 0 ? "BEST OVERALL" : index === 1 ? "BEST AFFORDABLE" : "BEST PREMIUM")}
+              </span>
             </div>
             <div className={styles.productImageContainer}>
               <Image 
@@ -264,7 +265,8 @@ export default async function ReviewPage({ params }: ReviewPageParams) {
             id={`product-${product._id}`}
           >
             <h2 className={styles.productDetailTitle}>
-              #{index + 1} {product.productName} - {product.award || awards[index] || "BEST CHOICE"}
+              <span className={styles.productRank}>{index + 1}</span>
+              {product.productName} - {product.award || (index === 0 ? "BEST OVERALL" : index === 1 ? "BEST AFFORDABLE" : "BEST PREMIUM")}
             </h2>
             <div className={styles.productDetailContent}>
               <div className={styles.productDetailImage}>
