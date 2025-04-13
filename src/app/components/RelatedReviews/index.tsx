@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { connectToDatabase } from '@/lib/mongodb';
-import styles from '@/app/review/[id]/review.module.css';
+// Update this import
+import styles from '@/app/review/[slug]/review.module.css';
 import productStyles from '@/app/product/product.module.css';
 import { ObjectId, Filter, Document } from 'mongodb';
 
@@ -18,7 +19,6 @@ interface RelatedReviewsProps {
 }
 
 export default async function RelatedReviews({ category, currentId }: RelatedReviewsProps) {
-  // Get related and latest reviews
   const relatedReviews = await getRelatedReviews(category, currentId || '', 3);
   const latestReviews = await getLatestReviews(category, 3);
   
@@ -32,7 +32,10 @@ export default async function RelatedReviews({ category, currentId }: RelatedRev
           {relatedReviews.length > 0 ? (
             relatedReviews.map((relatedReview: Review) => (
               <li key={relatedReview._id.toString()} className={styles.relatedReviewItem}>
-                <Link href={`/review/${relatedReview.slug || relatedReview._id}`} className={`${styles.relatedReviewLink} ${productStyles.fullReviewLink}`}>
+                <Link 
+                  href={`/review/${relatedReview.slug}`} 
+                  className={`${styles.relatedReviewLink} ${productStyles.fullReviewLink}`}
+                >
                   {relatedReview.reviewTitle}
                 </Link>
               </li>

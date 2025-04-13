@@ -68,7 +68,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
             {products.map((product) => (
               <Link
                 href={`/product/${product.slug || product._id}/${
-                  product.award || 'details'
+                  product.award.replace(/\s+/g, '-').toLowerCase() .replace(/[^a-z0-9-]/g, '')    || 'details'
                 }`}
                 key={product._id.toString()}
                 className={styles.productCard}

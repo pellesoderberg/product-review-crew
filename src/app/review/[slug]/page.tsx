@@ -38,7 +38,7 @@ interface Review {
 
 // Update the params type to be a Promise only
 type ReviewPageParams = {
-  params: Promise<{ id: string }>
+  params: Promise<{ slug: string }>
 };
 
 // Update the getReviewData function to better handle different ID formats
@@ -167,12 +167,10 @@ async function getReviewData(id: string) {
 }
 
 // In the ReviewPage component, update the redirect check
+// Update the function signature
 export default async function ReviewPage({ params }: ReviewPageParams) {
-  // Await the params to get the id
   const resolvedParams = await params;
-  const id = resolvedParams.id;
-  
-  const data = await getReviewData(id);
+  const data = await getReviewData(resolvedParams.slug);
   
   // Handle redirects for SEO
   if (data && 'redirect' in data && typeof data.redirect === 'string') {
@@ -515,40 +513,35 @@ function formatProductReviewText(text: string): string {
 }
 
 // Generate static pages for all reviews
-// Fix the generateStaticParams function to return the correct type
 export async function generateStaticParams() {
   try {
     const connection = await connectToDatabase();
     
     if (!connection || !connection.db) {
       console.error('Database connection failed');
-      return []; // Return empty array instead of null
+      return [];
     }
     
     const { db } = connection;
     
     const reviews = await db.collection('comparison_reviews')
       .find({})
-      .limit(20) // Limit to a reasonable number for static generation
+      .limit(20)
       .toArray();
     
-    // Format the params correctly
     return reviews.map(review => ({
-      id: review._id.toString()
+      slug: review.slug || review._id.toString()
     }));
   } catch (error) {
     console.error('Error generating static params:', error);
-    return []; // Return empty array instead of null
+    return [];
   }
 }
 
 // Update metadata function to use Promise type
 export async function generateMetadata({ params }: ReviewPageParams) {
-  // Await params to get the id
   const resolvedParams = await params;
-  const id = resolvedParams.id;
-  
-  const data = await getReviewData(id);
+  const data = await getReviewData(resolvedParams.slug); // Changed from id to slug
 
   if (!data || 'redirect' in data) {
     return {
