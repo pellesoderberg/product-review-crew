@@ -2,43 +2,33 @@ import { NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import { ObjectId } from 'mongodb';
 
-// Simple in-memory cache
 const cache: Record<string, { data: Record<string, unknown>, timestamp: number }> = {};
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutes in milliseconds
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
-// Change the type definition for the route handler
-export async function GET(
-  request: Request,
-) {
-  // Extract the ID from the URL path
+export async function GET(request: Request) {
   const url = new URL(request.url);
   const pathParts = url.pathname.split('/');
-  const id = pathParts[pathParts.length - 1];
+  const slug = decodeURIComponent(pathParts[pathParts.length - 1]);
 
-  if (!id) {
-    return NextResponse.json({ error: 'Review ID is required' }, { status: 400 });
+  if (!slug) {
+    return NextResponse.json({ error: 'Review slug is required' }, { status: 400 });
   }
 
-  // Check cache first
-  if (cache[id] && (Date.now() - cache[id].timestamp) < CACHE_TTL) {
-    return NextResponse.json(cache[id].data);
+  if (cache[slug] && (Date.now() - cache[slug].timestamp) < CACHE_TTL) {
+    return NextResponse.json(cache[slug].data);
   }
 
   try {
-      // Fix: Add null check for the database connection
-      const connection = await connectToDatabase();
+    const connection = await connectToDatabase();
     
-      if (!connection || !connection.db) {
-        return NextResponse.json({ error: 'Database connection failed' }, { status: 500 });
-      }
-      
-      const { db } = connection;
+    if (!connection || !connection.db) {
+      return NextResponse.json({ error: 'Database connection failed' }, { status: 500 });
+    }
     
-    // Use a more efficient aggregation pipeline to get review and products in one query
+    const { db } = connection;
+
     const pipeline = [
-      // Match the review by ID
-      { $match: { _id: new ObjectId(id) } },
-      // Lookup products in one operation
+      { $match: { slug: slug } },
       {
         $lookup: {
           from: 'product_reviews',
@@ -61,6 +51,30 @@ export async function GET(
     const results = await db.collection('comparison_reviews').aggregate(pipeline).toArray();
     
     if (!results.length) {
+      // Try finding by ID if slug not found (for backward compatibility)
+      if (ObjectId.isValid(slug)) {
+        const idResults = await db.collection('comparison_reviews')
+          .aggregate([
+            { $match: { _id: new ObjectId(slug) } },
+            ...pipeline.slice(1)
+          ])
+          .toArray();
+        
+        if (idResults.length) {
+          const responseData = {
+            review: idResults[0],
+            products: idResults[0].productDetails || []
+          };
+          delete responseData.review.productDetails;
+          
+          cache[slug] = {
+            data: responseData,
+            timestamp: Date.now()
+          };
+          
+          return NextResponse.json(responseData);
+        }
+      }
       return NextResponse.json({ error: 'Review not found' }, { status: 404 });
     }
 
@@ -70,8 +84,7 @@ export async function GET(
 
     const responseData = { review, products };
     
-    // Store in cache
-    cache[id] = {
+    cache[slug] = {
       data: responseData,
       timestamp: Date.now()
     };

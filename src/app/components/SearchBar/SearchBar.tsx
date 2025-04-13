@@ -125,7 +125,7 @@ export default function SearchBar() {
         let combinedResults = [...formattedReviews, ...formattedProducts];
         
         // Limit to 3 suggestions total
-        combinedResults = combinedResults.slice(0, 3);
+        combinedResults = combinedResults.slice(0, 10);
         
         console.log('Combined results:', combinedResults);
         setSuggestions(combinedResults);
