@@ -1,82 +1,97 @@
-'use client';
-
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { ComparisonReview } from '@/types';
-import Loading from '@/components/Loading/Loading';
+import { connectToDatabase } from '@/lib/mongodb';
 import styles from './category.module.css';
+import Link from 'next/link';
 
-export default function CategoryPage({ params }: { params: { category: string } }) {
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [reviews, setReviews] = useState<ComparisonReview[]>([]);
-  const category = decodeURIComponent(params.category);
+// Define a Review interface
+interface Review {
+  _id: string;
+  reviewTitle: string;
+  updatedAt?: string | Date;
+  createdAt?: string | Date;
+  introduction?: string;
+}
 
-  useEffect(() => {
-    const fetchCategoryData = async () => {
-      try {
-        const response = await fetch(`/api/category/${encodeURIComponent(category)}`);
-        
-        if (!response.ok) {
-          throw new Error('Failed to fetch category data');
-        }
-        
-        const data = await response.json();
-        setReviews(data.reviews);
-      } catch (err) {
-        console.error(err);
-        setError('Failed to load category data. Please try again later.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCategoryData();
-  }, [category]);
-
-  if (loading) {
-    return <Loading />;
-  }
-
-  if (error) {
-    return <div className={styles.error}>{error}</div>;
-  }
-
+// Update the props type to match Next.js 15 requirements
+export default async function CategoryPage({
+  params
+}: {
+  params: Promise<{ category: string }>
+}) {
+  // Await the params to get the category
+  const resolvedParams = await params;
+  const category = resolvedParams.category;
+  
+  // Fetch category data
+  const reviews = await fetchCategoryData(category);
+  
   return (
     <div className={styles.container}>
-      <header className={styles.header}>
-        <h1 className={styles.title}>{category}</h1>
-        <p className={styles.description}>
-          Browse all product reviews in the {category} category
-        </p>
-      </header>
-
+      <h1 className={styles.title}>{decodeURIComponent(category)} Reviews</h1>
+      
       {reviews.length > 0 ? (
-        <div className={styles.reviewsGrid}>
-          {reviews.map((review) => (
-            <Link 
-              href={`/review/${review._id}`} 
-              key={review._id}
-              className={styles.reviewCard}
-            >
+        <div className={styles.reviewGrid}>
+          {reviews.map((review: Review) => (
+            <Link href={`/review/${review._id}`} key={review._id} className={styles.reviewCard}>
               <h2 className={styles.reviewTitle}>{review.reviewTitle}</h2>
-              <p className={styles.reviewSummary}>{review.reviewSummary}</p>
-              <div className={styles.meta}>
-                <span className={styles.date}>
-                  {new Date(review.updatedAt).toLocaleDateString()}
-                </span>
-              </div>
+              <p className={styles.reviewDate}>
+                {formatDate(review.updatedAt || review.createdAt)}
+              </p>
+              <p className={styles.reviewExcerpt}>
+                {review.introduction ? `${review.introduction.substring(0, 150)}...` : 'No introduction available'}
+              </p>
             </Link>
           ))}
         </div>
       ) : (
-        <div className={styles.noResults}>
-          <p>No reviews found for the {category} category.</p>
-          <Link href="/" className={styles.backLink}>
-            Back to Home
-          </Link>
-        </div>
+        <p className={styles.noResults}>No reviews found in this category.</p>
       )}
     </div>
   );
+}
+
+// Helper function to format dates safely
+function formatDate(dateValue: string | Date | undefined): string {
+  if (!dateValue) {
+    return 'No date available';
+  }
+  
+  try {
+    const date = new Date(dateValue);
+    return date.toLocaleDateString();
+  } catch (error) {
+    console.error('Error formatting date:', error);
+    return 'Invalid date';
+  }
+}
+
+// Helper function to fetch category data
+async function fetchCategoryData(category: string): Promise<Review[]> {
+  try {
+    const connection = await connectToDatabase();
+    
+    if (!connection || !connection.db) {
+      console.error('Database connection failed');
+      return [];
+    }
+    
+    const { db } = connection;
+    
+    const reviewDocs = await db.collection('comparison_reviews')
+      .find({ category: { $regex: new RegExp(category, 'i') } })
+      .toArray();
+    
+    // Properly map MongoDB documents to Review interface
+    const reviews: Review[] = reviewDocs.map(doc => ({
+      _id: doc._id.toString(),
+      reviewTitle: doc.reviewTitle || 'Untitled Review',
+      updatedAt: doc.updatedAt,
+      createdAt: doc.createdAt,
+      introduction: doc.introduction
+    }));
+    
+    return reviews;
+  } catch (error) {
+    console.error('Error fetching category data:', error);
+    return [];
+  }
 }

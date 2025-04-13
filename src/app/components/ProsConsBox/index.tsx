@@ -1,3 +1,4 @@
+import React from 'react';
 import styles from './ProsConsBox.module.css';
 
 interface ProsConsBoxProps {
@@ -5,32 +6,46 @@ interface ProsConsBoxProps {
   cons: string[];
 }
 
-export default function ProsConsBox({ pros, cons }: ProsConsBoxProps) {
+const ProsConsBox: React.FC<ProsConsBoxProps> = ({ pros, cons }) => {
   return (
     <div className={styles.prosConsContainer}>
       <div className={styles.prosConsColumn}>
-        <h3>Pros</h3>
         <ul className={styles.prosList}>
-          {pros.map((pro, index) => (
-            <li key={index} className={styles.proItem}>
+          {pros && pros.length > 0 ? (
+            pros.map((pro, index) => (
+              <li key={`pro-${index}`} className={styles.proItem}>
+                <span className={styles.plusIcon}>+</span>
+                <span className={styles.proContent}>{pro}</span>
+              </li>
+            ))
+          ) : (
+            <li className={styles.proItem}>
               <span className={styles.plusIcon}>+</span>
-              <span className={styles.proContent}>{pro}</span>
+              <span className={styles.proContent}>High quality product</span>
             </li>
-          ))}
+          )}
         </ul>
       </div>
       
       <div className={styles.prosConsColumn}>
-        <h3>Cons</h3>
         <ul className={styles.consList}>
-          {cons.map((con, index) => (
-            <li key={index} className={styles.conItem}>
+          {cons && cons.length > 0 ? (
+            cons.map((con, index) => (
+              <li key={`con-${index}`} className={styles.conItem}>
+                <span className={styles.minusIcon}>-</span>
+                <span className={styles.conContent}>{con}</span>
+              </li>
+            ))
+          ) : (
+            <li className={styles.conItem}>
               <span className={styles.minusIcon}>-</span>
-              <span className={styles.conContent}>{con}</span>
+              <span className={styles.conContent}>Higher price point</span>
             </li>
-          ))}
+          )}
         </ul>
       </div>
     </div>
   );
-}
+};
+
+export default ProsConsBox;

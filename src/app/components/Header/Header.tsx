@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import styles from './Header.module.css';
-import SearchBar from './SearchBar/SearchBar';
+import SearchBar from '../SearchBar/SearchBar';
 
 export default function Header() {
   return (

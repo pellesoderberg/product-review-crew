@@ -1,5 +1,4 @@
-import Image from 'next/image';
-import Link from 'next/link';
+// Remove unused imports
 import styles from './about.module.css';
 
 export default function AboutPage() {
@@ -26,7 +25,7 @@ export default function AboutPage() {
         <div className={styles.section}>
           <h2 className={styles.sectionTitle}>Our Commitment to Integrity</h2>
           <p>
-            At Product-Review-Crew, we maintain complete editorial independence. We don't accept payment for reviews, and our AI algorithms are designed to filter out fake or incentivized reviews that might skew results. This commitment to integrity means you receive honest, unbiased assessments that you can trust when making purchasing decisions.
+            At Product-Review-Crew, we maintain complete editorial independence. We don&apos;t accept payment for reviews, and our AI algorithms are designed to filter out fake or incentivized reviews that might skew results. This commitment to integrity means you receive honest, unbiased assessments that you can trust when making purchasing decisions.
           </p>
           <p>
             Our revenue model is based on affiliate partnerships and advertising on the site, but these relationships never influence our review outcomes. The AI evaluates products based solely on user experiences and technical specifications, ensuring objective recommendations regardless of commercial considerations.
@@ -52,7 +51,7 @@ export default function AboutPage() {
             We believe that informed consumers make better decisions. Our vision is to transform how people research products by providing access to comprehensive, data-driven insights that reflect the collective experience of thousands of users.
           </p>
           <p>
-            As AI technology continues to evolve, so will our capabilities. We're committed to ongoing innovation in our analytical methods, constantly refining our algorithms to deliver increasingly accurate and nuanced product assessments.
+            As AI technology continues to evolve, so will our capabilities. We&apos;re committed to ongoing innovation in our analytical methods, constantly refining our algorithms to deliver increasingly accurate and nuanced product assessments.
           </p>
           <p>
             Product-Review-Crew stands at the intersection of artificial intelligence and consumer advocacy, using technology to empower shoppers with reliable information in an increasingly complex marketplace.

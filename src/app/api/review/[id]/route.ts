@@ -3,15 +3,17 @@ import { connectToDatabase } from '@/lib/mongodb';
 import { ObjectId } from 'mongodb';
 
 // Simple in-memory cache
-const cache: Record<string, { data: any, timestamp: number }> = {};
+const cache: Record<string, { data: Record<string, unknown>, timestamp: number }> = {};
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes in milliseconds
 
+// Change the type definition for the route handler
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
 ) {
-  // Await params before accessing its properties
-  const id = (await params).id;
+  // Extract the ID from the URL path
+  const url = new URL(request.url);
+  const pathParts = url.pathname.split('/');
+  const id = pathParts[pathParts.length - 1];
 
   if (!id) {
     return NextResponse.json({ error: 'Review ID is required' }, { status: 400 });
@@ -23,7 +25,14 @@ export async function GET(
   }
 
   try {
-    const { db } = await connectToDatabase();
+      // Fix: Add null check for the database connection
+      const connection = await connectToDatabase();
+    
+      if (!connection || !connection.db) {
+        return NextResponse.json({ error: 'Database connection failed' }, { status: 500 });
+      }
+      
+      const { db } = connection;
     
     // Use a more efficient aggregation pipeline to get review and products in one query
     const pipeline = [
@@ -69,7 +78,7 @@ export async function GET(
     
     return NextResponse.json(responseData);
   } catch (error) {
-    console.error('Database error:', error);
-    return NextResponse.json({ error: 'Failed to fetch data' }, { status: 500 });
+    console.error('Error fetching review:', error);
+    return NextResponse.json({ error: 'Failed to fetch review data' }, { status: 500 });
   }
 }

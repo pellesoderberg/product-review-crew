@@ -2,17 +2,26 @@ import { NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 
 export async function GET(
-  request: Request,
-  { params }: { params: { category: string } }
+  request: Request
 ) {
-  const category = decodeURIComponent(params.category);
+  // Extract the category from the URL path
+  const url = new URL(request.url);
+  const pathParts = url.pathname.split('/');
+  const category = decodeURIComponent(pathParts[pathParts.length - 1]);
 
   if (!category) {
     return NextResponse.json({ error: 'Category parameter is required' }, { status: 400 });
   }
 
   try {
-    const { db } = await connectToDatabase();
+    // Fix: Add null check for the database connection
+    const connection = await connectToDatabase();
+    
+    if (!connection || !connection.db) {
+      return NextResponse.json({ error: 'Database connection failed' }, { status: 500 });
+    }
+    
+    const { db } = connection;
     
     // Find all comparison reviews in the specified category
     const reviews = await db.collection('comparison_reviews')
