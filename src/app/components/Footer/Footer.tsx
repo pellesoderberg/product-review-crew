@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import styles from './Footer.module.css';
-import heroStyles from '../Hero/hero.module.css';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -11,23 +10,24 @@ export default function Footer() {
         <div className={styles.footerContent}>
           <div className={styles.footerSection}>
             <h3 className={styles.footerTitle}>Product-Review-Crew</h3>
-            <p className={heroStyles.footerDescription}>
+            <p className={styles.footerDescription}>
               AI-powered product reviews based on thousands of real user experiences.
             </p>
           </div>
           
-          <div className={heroStyles.footerSection}>
-            <h3 className={heroStyles.footerTitle}>Quick Links</h3>
-            <ul className={heroStyles.footerLinks}>
+          <div className={styles.footerSection}>
+            <h3 className={styles.footerTitle}>Quick Links</h3>
+            <ul className={styles.footerLinks}>
               <li><Link href="/">Home</Link></li>
               <li><Link href="/search?all=true">Reviews</Link></li>
               <li><Link href="/about">About Us</Link></li>
+              <li><Link href="/resellers">For Resellers</Link></li>
             </ul>
           </div>
           
-          <div className={heroStyles.footerSection}>
-            <h3 className={heroStyles.footerTitle}>Follow Us</h3>
-            <ul className={heroStyles.footerLinks}>
+          <div className={styles.footerSection}>
+            <h3 className={styles.footerTitle}>Follow Us</h3>
+            <ul className={styles.footerLinks}>
               <li><a href="https://twitter.com/product-review-crew" target="_blank" rel="noopener noreferrer">Twitter</a></li>
               <li><a href="https://instagram.com/product-review-crew" target="_blank" rel="noopener noreferrer">Instagram</a></li>
               <li><a href="https://facebook.com/product-review-crew" target="_blank" rel="noopener noreferrer">Facebook</a></li>

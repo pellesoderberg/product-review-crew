@@ -19,6 +19,11 @@
   justify-content: space-between;
 }
 
+.rightContainer {
+  display: flex;
+  align-items: center;
+}
+
 .logo {
   font-size: 1.5rem;
   font-weight: 700;
@@ -36,7 +41,7 @@
 /* Enhanced search styling */
 .searchContainer input {
   width: 100%;
-  padding: 0.5rem 1rem; /* Reduced from 0.75rem to 0.5rem */
+  padding: 0.5rem 1rem;
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 4px;
   font-size: 0.9rem;
@@ -47,9 +52,9 @@
 
 .searchContainer input:focus {
   outline: none;
-  border-color: #fcfafa;
+  border-color: #000;
   background-color: white;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0px 0px rgba(0, 0, 0, 0.1);
 }
 
 .searchContainer button {
@@ -83,14 +88,161 @@
   color: #000;
 }
 
-@media (max-width: 768px) {
+/* Hamburger menu styles */
+.menuButton {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  z-index: 101;
+  margin-left: 0.5rem;
+}
+
+.menuIcon {
+  display: block;
+  position: relative;
+  width: 24px;
+  height: 18px;
+}
+
+.menuIcon span {
+  display: block;
+  position: absolute;
+  height: 2px;
+  width: 100%;
+  background: #000;
+  border-radius: 2px;
+  opacity: 1;
+  left: 0;
+  transform: rotate(0deg);
+  transition: .25s ease-in-out;
+}
+
+.menuIcon span:nth-child(1) {
+  top: 0px;
+}
+
+.menuIcon span:nth-child(2) {
+  top: 8px;
+}
+
+.menuIcon span:nth-child(3) {
+  top: 16px;
+}
+
+.menuOpen .menuIcon span:nth-child(1) {
+  top: 8px;
+  transform: rotate(135deg);
+}
+
+.menuOpen .menuIcon span:nth-child(2) {
+  opacity: 0;
+  left: -60px;
+}
+
+.menuOpen .menuIcon span:nth-child(3) {
+  top: 8px;
+  transform: rotate(-135deg);
+}
+
+/* iPad and mobile styles - increased breakpoint to 1024px for iPad */
+@media (max-width: 1250px) {
+  .header {
+    padding: 0.75rem 2rem;
+  }
+  
   .container {
     flex-wrap: wrap;
   }
   
+  .logo {
+    font-size: 1.2rem;
+  }
+  
   .searchContainer {
-    order: 3;
+    width: 300px;
+    margin-right: 0;
+  }
+  
+  .menuButton {
+    display: block;
+  }
+  
+  .nav {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 280px;
+    height: 100vh;
+    background-color: white;
+    flex-direction: column;
+    padding: 5rem 1.5rem 1.5rem;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+    transition: right 0.3s ease;
+    z-index: 100;
+  }
+  
+  .navOpen {
+    right: 0;
+  }
+  
+  .navLink {
+    font-size: 1.1rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #eaeaea;
+  }
+  
+  .overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
-    margin: 0.5rem 0 0;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 99;
+  }
+  
+  .overlayVisible {
+    display: block;
+  }
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+  .header {
+    padding: 0.5rem 1rem;
+  }
+  
+  .searchContainer {
+    width: 100%;
+    margin: 0;
+  }
+  
+  .rightContainer {
+    width: 100%;
+    justify-content: space-between;
+    margin-top: 0.5rem;
+  }
+  
+  .container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .logo {
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* For very small screens */
+@media (max-width: 480px) {
+  .nav {
+    width: 80%;
+  }
+  
+  .navLink {
+    font-size: 1rem;
   }
 }
