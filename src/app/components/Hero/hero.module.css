@@ -12,17 +12,16 @@
   padding-top: 8rem;
 }
 
-/* Add or update this CSS rule to move the NEW REVIEW! text up */
 .newReviewTag {
   font-size: 18px;
   font-weight: 600;
   color: #4a5568;
-  margin-bottom: 35px; /* Increase this value to create more space */
+  margin-bottom: 35px;
   text-transform: uppercase;
   letter-spacing: 1px;
   animation: fadeIn 0.8s ease-out forwards;
   opacity: 0;
-  margin-top: -20px; /* Add negative margin to move it up */
+  margin-top: -20px;
 }
 
 .heroContent {
@@ -76,6 +75,12 @@
   opacity: 0;
 }
 
+.heroImage img {
+  max-width: 100%;
+  max-height: 400px;
+  object-fit: contain;
+}
+
 /* Animation keyframes */
 @keyframes slideInFromLeft {
   0% {
@@ -108,45 +113,98 @@
   }
 }
 
-/* Add responsive styles */
-@media (max-width: 768px) {
+/* Tablet styles */
+@media (max-width: 1024px) {
   .heroSection {
     flex-direction: column;
-    padding: 60px 20px;
+    text-align: center;
+    padding: 1.5rem 1rem;
     height: auto;
-    min-height: calc(100vh - 70px);
+    min-height: auto;
   }
   
   .heroContent {
-    width: 100%;
+    width: 70%;
+    padding-right: 0;
     margin-left: 0;
-    margin-bottom: 40px;
+    margin-bottom: 2rem;
+  }
+  
+  .heroTitle {
+    font-size: 2.5rem;
+  }
+  
+  .heroText {
+    margin: 0 auto 2rem;
+    max-width: 100%;
   }
   
   .heroImage {
-    width: 100%;
+    width: 40%;
+    max-width: 40%;
+    margin: 0 auto 2rem;
   }
 }
 
-.heroImage img {
-  max-width: 100%;
-  max-height: 400px;
-  object-fit: contain;
-}
-
+/* Mobile styles */
 @media (max-width: 768px) {
   .heroSection {
-    flex-direction: column;
     padding: 40px 20px;
   }
   
   .heroContent {
-    width: 100%;
-    padding-left: 0;
-    margin-bottom: 40px;
+    width: 70%;
+    padding-right: 0;
+    padding-top: 40px;
+    margin-left: 0;
+    margin-bottom: 2rem;
+  }
+  
+  .heroTitle {
+    font-size: 2rem;
+    order: 1;
+  }
+  
+  .heroText {
+    order: 2;
+    font-size: 0.95rem;
   }
   
   .heroImage {
-    width: 100%;
+    order: 3;
+    width: 40%;
+    max-width: 40%;
+    margin: 1.5rem auto;
+  }
+  
+  .heroButton {
+    order: 4;
+  }
+}
+
+/* Small mobile styles */
+@media (max-width: 480px) {
+  .heroSection {
+    padding: 1rem 0.5rem;
+  }
+  
+  .heroTitle {
+    font-size: 1.75rem;
+  }
+  
+  .heroImage {
+    width: 40%;
+    max-width: 40%;
+    margin: 1rem auto;
+  }
+  
+  .heroText {
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+  
+  .heroButton {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
   }
 }

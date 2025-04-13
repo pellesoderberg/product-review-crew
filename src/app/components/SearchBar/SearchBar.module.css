@@ -59,10 +59,10 @@
   left: 0;
   width: 100%;
   background-color: white;
-  border: 1px solid #000;
+  border: 0px solid #000;
   border-top: none;
   border-radius: 0;
-  max-height: 300px;
+  max-height:200px;
   overflow-y: auto;
   z-index: 10;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -76,10 +76,13 @@
   color: #333;
   text-decoration: none;
   border-bottom: 1px solid #eee;
+  font-size: 0.89rem;
+  cursor: pointer; /* 👈 Add this line */
+
 }
 
 .suggestionType {
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   color: #666;
   text-transform: uppercase;
   background-color: #f0f0f0;

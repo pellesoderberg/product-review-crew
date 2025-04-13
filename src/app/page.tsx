@@ -35,7 +35,12 @@ export default async function Home() {
               alt={featuredProduct.productName || "Product"}
               width={600}
               height={400}
-              className="max-w-full h-auto object-contain"
+              priority
+              style={{
+                maxWidth: '100%',
+                height: 'auto',
+                objectFit: 'contain'
+              }}
             />
           ) : (
             <div className="bg-gray-200 w-full h-[400px] flex items-center justify-center">
@@ -59,8 +64,7 @@ export default async function Home() {
   );
 }
 
-// Helper functions
-
+// Helper functions remain unchanged
 async function getFeaturedProduct() {
   try {
     const { db } = await connectToDatabase();
