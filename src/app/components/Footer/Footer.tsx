@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import styles from './Footer.module.css';
-import heroStyles from '../../app/hero.module.css';
+import heroStyles from '../Hero/hero.module.css';
 
 
 export default function Footer() {

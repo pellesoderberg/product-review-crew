@@ -1,125 +1,127 @@
+// src/app/search/page.tsx
+
 import { connectToDatabase } from '@/lib/mongodb';
 import Link from 'next/link';
-import styles from './search.module.css';
 import Image from 'next/image';
-import { ObjectId } from 'mongodb';
+import styles from './search.module.css';
+import { Metadata } from 'next';
 
-// Define the Product interface
-interface Product {
-  _id: string | ObjectId;
-  productName: string;
-  image: string;
-  slug?: string;
-  category?: string;
-  priceRange?: string;
-  price?: string;
-  shortSummary?: string;
-  fullReview?: string;
-}
-
-// Update the SearchPageProps type to use Promise for searchParams
-type SearchPageProps = {
-  searchParams: Promise<{ q: string }>
+export const metadata: Metadata = {
+  title: 'Search Results',
 };
 
+interface SearchPageProps {
+  searchParams: Promise<{ q?: string }>;
+}
+
 export default async function SearchPage({ searchParams }: SearchPageProps) {
-  // Await the searchParams to get the query
   const resolvedParams = await searchParams;
   const query = resolvedParams.q || '';
-  
-  // If no query, show empty search page
-  if (!query) {
-    return (
-      <div className={styles.container}>
-        <h1 className={styles.title}>Search Products</h1>
-        <p className={styles.emptyMessage}>Enter a search term to find products</p>
-      </div>
-    );
-  }
-  
-  // Search for products matching the query
-  const results = await searchProducts(query);
-  
+  const { reviews, products } = await getSearchResults(query);
+  const hasResults = reviews.length > 0 || products.length > 0;
+
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Search Results for {query}</h1>
-      
-      {results.length === 0 ? (
-        <p className={styles.emptyMessage}>No products found matching your search</p>
-      ) : (
-        <div className={styles.resultsGrid}>
-          {results.map((product: Product) => (
-            <Link 
-              href={`/product/${product.slug || product._id}`} 
-              key={product._id.toString()}
-              className={styles.productCard}
-            >
-              <div className={styles.productImageContainer}>
-                <Image 
-                  src={product.image || '/placeholder.jpg'} 
-                  alt={product.productName}
-                  width={200}
-                  height={200}
-                  className={styles.productImage}
-                />
-              </div>
-              <div className={styles.productInfo}>
-                <h2 className={styles.productName}>{product.productName}</h2>
-                <p className={styles.productCategory}>{product.category}</p>
-                <p className={styles.productPrice}>{product.priceRange || product.price || '$399'}</p>
-              </div>
-            </Link>
-          ))}
+      <h1 className={styles.title}>
+        {query ? `Search Results for "${query}"` : 'All Reviews and Products'}
+      </h1>
+
+      {!hasResults && (
+        <p className={styles.noResults}>
+          No results found. Try a different search term.
+        </p>
+      )}
+
+      {reviews.length > 0 && (
+        <div className={styles.section}>
+          <h2 className={styles.sectionTitle}>Reviews</h2>
+          <div className={styles.reviewsGrid}>
+            {reviews.map((review) => (
+              <Link
+                href={`/review/${review.slug || review._id}`}
+                key={review._id.toString()}
+                className={styles.reviewCard}
+              >
+                <h3 className={styles.reviewTitle}>{review.reviewTitle}</h3>
+                <p className={styles.reviewSummary}>
+                  {review.reviewSummary
+                    ? review.reviewSummary
+                        .split(' ')
+                        .slice(0, 20)
+                        .join(' ') +
+                      (review.reviewSummary.split(' ').length > 20
+                        ? '...'
+                        : '')
+                    : 'No summary available'}
+                </p>
+                <span className={styles.viewReview}>View Review →</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {products.length > 0 && (
+        <div className={styles.section}>
+          <h2 className={styles.sectionTitle}>Products</h2>
+          <div className={styles.productsGrid}>
+            {products.map((product) => (
+              <Link
+                href={`/product/${product.slug || product._id}/${
+                  product.award || 'details'
+                }`}
+                key={product._id.toString()}
+                className={styles.productCard}
+              >
+                <div className={styles.productImageContainer}>
+                  <Image
+                    src="/placeholder.jpg"
+                    alt={product.productName}
+                    width={150}
+                    height={150}
+                    className={styles.productImage}
+                  />
+                </div>
+                <div className={styles.productInfo}>
+                  <h3 className={styles.productName}>{product.productName}</h3>
+                  <p className={styles.productSummary}>
+                    {product.shortSummary}
+                  </p>
+                  <span className={styles.viewProduct}>View Product →</span>
+                </div>
+              </Link>
+            ))}
+          </div>
         </div>
       )}
     </div>
   );
 }
 
-// Function to search for products
-async function searchProducts(query: string): Promise<Product[]> {
+async function getSearchResults(query: string) {
   try {
-    const connection = await connectToDatabase();
-    
-    if (!connection || !connection.db) {
-      console.error('Database connection failed');
-      return [];
-    }
-    
-    const { db } = connection;
-    
-    // Create a case-insensitive regex for the search query
-    const searchRegex = new RegExp(query, 'i');
-    
-    // Search in product name, category, and description
-    const productDocs = await db.collection('product_reviews')
-      .find({
-        $or: [
-          { productName: { $regex: searchRegex } },
-          { category: { $regex: searchRegex } },
-          { shortSummary: { $regex: searchRegex } },
-          { fullReview: { $regex: searchRegex } }
-        ]
-      })
-      .limit(20)
-      .toArray();
-    
-    // Map MongoDB documents to Product interface
-    const products: Product[] = productDocs.map(doc => ({
-      _id: doc._id,
-      productName: doc.productName || 'Unknown Product',
-      image: doc.image || '/placeholder.jpg',
-      slug: doc.slug,
-      category: doc.category,
-      priceRange: doc.priceRange,
-      price: doc.price,
-      shortSummary: doc.shortSummary,
-      fullReview: doc.fullReview
-    }));
-    
-    return products;
+    const { db } = await connectToDatabase();
+
+    if (!db) throw new Error('Database connection failed');
+
+    const searchRegex = query ? new RegExp(query, 'i') : undefined;
+
+    const [reviews, products] = await Promise.all([
+      db
+        .collection('comparison_reviews')
+        .find(searchRegex ? { reviewTitle: searchRegex } : {})
+        .limit(query ? 10 : 20)
+        .toArray(),
+      db
+        .collection('product_reviews')
+        .find(searchRegex ? { productName: searchRegex } : {})
+        .limit(query ? 10 : 20)
+        .toArray(),
+    ]);
+
+    return { reviews, products };
   } catch (error) {
-    console.error('Error searching products:', error);
-    return [];
+    console.error('Error searching:', error);
+    return { reviews: [], products: [] };
   }
 }

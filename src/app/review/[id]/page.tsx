@@ -4,7 +4,7 @@ import { connectToDatabase } from '@/lib/mongodb';
 import { ObjectId } from 'mongodb';
 import styles from './review.module.css';
 import { redirect } from 'next/navigation';
-import ProsConsBox from '@/components/ProsConsBox';
+import ProsConsBox from '@/app/components/ProsConsBox';
 
 // Define proper types for the data structures
 interface Product {

@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import RelatedReviews from '@/components/RelatedReviews';
+import RelatedReviews from '@/app/components/RelatedReviews';
 import styles from './page.module.css';
-import heroStyles from './hero.module.css';
+import heroStyles from '@/app/components/Hero/hero.module.css';
 import { connectToDatabase } from '@/lib/mongodb';
 
 export default async function Home() {

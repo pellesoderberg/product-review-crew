@@ -3,8 +3,8 @@ import { ObjectId } from 'mongodb';
 import Link from 'next/link';
 import Image from 'next/image';
 import styles from '../product.module.css';
-import RelatedReviews from '@/components/RelatedReviews';
-import ProsConsBox from '@/components/ProsConsBox';
+import RelatedReviews from '@/app/components/RelatedReviews';
+import ProsConsBox from '@/app/components/ProsConsBox';
 
 // Define a proper type instead of using 'any'
 interface ProductData {
