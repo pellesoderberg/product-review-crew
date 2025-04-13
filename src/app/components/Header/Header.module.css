@@ -52,9 +52,9 @@
 
 .searchContainer input:focus {
   outline: none;
-  border-color: #000;
+  border-color: #ffffff;
   background-color: white;
-  box-shadow: 0 0px 0px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .searchContainer button {
