@@ -10,7 +10,14 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Title parameter is required' }, { status: 400 });
     }
 
-    const { db } = await connectToDatabase();
+        // Fix: Add null check for the database connection
+        const connection = await connectToDatabase();
+    
+        if (!connection || !connection.db) {
+          return NextResponse.json({ error: 'Database connection failed' }, { status: 500 });
+        }
+        
+        const { db } = connection;
     
     // Find the review with the exact title
     const review = await db.collection('comparison_reviews').findOne({

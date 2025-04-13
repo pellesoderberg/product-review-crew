@@ -1,14 +1,43 @@
 import { connectToDatabase } from '@/lib/mongodb';
 import { ObjectId } from 'mongodb';
 import Link from 'next/link';
+import Image from 'next/image';
 import styles from '../product.module.css';
 import RelatedReviews from '@/app/components/RelatedReviews';
 import ProsConsBox from '@/app/components/ProsConsBox';
 
+// Define a proper type instead of using 'any'
+interface ProductData {
+  _id: string | ObjectId;
+  productName: string;
+  slug?: string;
+  category?: string;
+  award?: string;
+  subtitle?: string;
+  image?: string;
+  price?: string;
+  priceRange?: string;
+  affiliateLink?: string;
+  link?: string;
+  shortSummary?: string;
+  pros?: string[];
+  cons?: string[];
+  review?: string;
+  fullReview?: string;
+}
+
 // Add this function to get the review slug for a product
-async function getReviewSlugForProduct(product: any) {
+async function getReviewSlugForProduct(product: ProductData) {
   try {
-    const { db } = await connectToDatabase();
+    // Add null check for the database connection
+    const connection = await connectToDatabase();
+    
+    if (!connection || !connection.db) {
+      console.error('Database connection failed');
+      return null;
+    }
+    
+    const { db } = connection;
     
     // First try to find a review that explicitly includes this product
     let review = null;
@@ -42,25 +71,42 @@ async function getReviewSlugForProduct(product: any) {
 
 // Add generateStaticParams function for static site generation
 export async function generateStaticParams() {
-  const { db } = await connectToDatabase();
-  
-  // Get all products that have slugs
-  const products = await db.collection('product_reviews')
-    .find({ slug: { $exists: true } })
-    .project({ slug: 1 })
-    .toArray();
-  
-  // Return an array of slug params
-  return products.map((product) => ({
-    slug: [product.slug],
-  }));
+  try {
+    const connection = await connectToDatabase();
+    
+    if (!connection || !connection.db) {
+      console.error('Database connection failed');
+      return []; // Return empty array instead of null
+    }
+    
+    const { db } = connection;
+    
+    const products = await db.collection('product_reviews')
+      .find({})
+      .limit(20) // Limit to a reasonable number for static generation
+      .toArray();
+    
+    // Format the params correctly
+    return products.map(product => ({
+      slug: [
+        product.slug || product._id.toString(),
+        (product.award || 'best-choice').toLowerCase().replace(/\s+/g, '-')
+      ]
+    }));
+  } catch (error) {
+    console.error('Error generating static params:', error);
+    return []; // Return empty array instead of null
+  }
 }
 
-// Add metadata export for better SEO
-// Fix the metadata function to properly await params
-export async function generateMetadata({ params }: { params: { slug: string[] } | Promise<{ slug: string[] }> }) {
-  // Await params if it's a Promise
-  const resolvedParams = 'then' in params ? await params : params;
+// Add metadata export for better SEO with Promise type
+export async function generateMetadata({ 
+  params 
+}: { 
+  params: Promise<{ slug: string[] }> 
+}) {
+  // Await params to get the slug
+  const resolvedParams = await params;
   const productSlug = resolvedParams.slug[0];
   const product = await getProductBySlug(productSlug);
   
@@ -80,9 +126,14 @@ export async function generateMetadata({ params }: { params: { slug: string[] } 
   };
 }
 
-export default async function ProductPage({ params }: { params: { slug: string[] } }) {
+// Update the page component to handle Promise-based params
+export default async function ProductPage({ 
+  params 
+}: { 
+  params: Promise<{ slug: string[] }> 
+}) {
   // Make sure params is properly awaited
-  const resolvedParams = await Promise.resolve(params);
+  const resolvedParams = await params;
   
   // Extract the product slug from the URL
   const slugArray = resolvedParams.slug;
@@ -95,7 +146,7 @@ export default async function ProductPage({ params }: { params: { slug: string[]
     return (
       <div className={styles.container}>
         <h1>Product not found</h1>
-        <p>The product you're looking for doesn't exist or has been removed.</p>
+        <p>The product you&apos;re looking for doesn&apos;t exist or has been removed.</p>
         <Link href="/search">
           <button className={styles.backButton}>Back to Search</button>
         </Link>
@@ -104,8 +155,9 @@ export default async function ProductPage({ params }: { params: { slug: string[]
   }
 
   // Generate SEO-friendly URL with award
-  const award = product.award || product.subtitle || 'details';
-  const seoAward = award.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+  //const award = product.award || product.subtitle || 'details';
+  // Remove unused variable or use it somewhere
+  // const seoAward = award.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
 
   // Get the review slug for this product
   const reviewSlug = await getReviewSlugForProduct(product);
@@ -118,10 +170,12 @@ export default async function ProductPage({ params }: { params: { slug: string[]
       
       <div className={styles.productContent}>
         <div className={styles.productImageContainer}>
-          <img 
-            src={product.image} 
+          <Image 
+            src={product.image || '/placeholder.jpg'} 
             alt={product.productName} 
             className={styles.productImage}
+            width={500}
+            height={500}
           />
           <div className={styles.priceContainer}>
             <span className={styles.price}>{product.priceRange || product.price || '100€'}</span>
@@ -139,7 +193,8 @@ export default async function ProductPage({ params }: { params: { slug: string[]
           {/* Replace the existing pros/cons container with ProsConsBox */}
           <ProsConsBox pros={product.pros || []} cons={product.cons || []} />
           
-          <div className={styles.compareSection}>            <Link 
+          <div className={styles.compareSection}>            
+            <Link 
               href={`/review/${reviewSlug}`} 
               className={styles.fullReviewLink}>
               See this product compared to similar products
@@ -167,9 +222,17 @@ export default async function ProductPage({ params }: { params: { slug: string[]
 }
 
 // Add a new function to get product by slug
-async function getProductBySlug(slug: string) {
+// Update the getProductBySlug function to properly type the return value
+async function getProductBySlug(slug: string): Promise<ProductData | null> {
   try {
-    const { db } = await connectToDatabase();
+    const connection = await connectToDatabase();
+    
+    if (!connection || !connection.db) {
+      console.error('Database connection failed');
+      return null;
+    }
+    
+    const { db } = connection;
     
     // First try to find by exact slug match
     let product = await db.collection('product_reviews').findOne({ 
@@ -185,31 +248,31 @@ async function getProductBySlug(slug: string) {
       });
     }
     
-    return product;
-  } catch (error) {
-    console.error('Error fetching product by slug:', error);
-    return null;
-  }
-}
-
-// Keep the original getProduct function for backward compatibility
-async function getProduct(id: string) {
-  try {
-    const { db } = await connectToDatabase();
-    
-    // Try to convert to ObjectId for MongoDB lookup
-    let query = {};
-    try {
-      query = { _id: new ObjectId(id) };
-    } catch (e) {
-      // If not a valid ObjectId, try looking up by string ID
-      query = { _id: id };
+    if (!product) {
+      return null;
     }
     
-    const product = await db.collection('product_reviews').findOne(query);
-    return product;
+    // Convert MongoDB document to ProductData
+    return {
+      _id: product._id,
+      productName: product.productName || 'Unknown Product',
+      slug: product.slug,
+      category: product.category,
+      award: product.award,
+      subtitle: product.subtitle,
+      image: product.image,
+      price: product.price,
+      priceRange: product.priceRange,
+      affiliateLink: product.affiliateLink,
+      link: product.link,
+      shortSummary: product.shortSummary,
+      pros: product.pros,
+      cons: product.cons,
+      review: product.review,
+      fullReview: product.fullReview
+    };
   } catch (error) {
-    console.error('Error fetching product:', error);
+    console.error('Error fetching product by slug:', error);
     return null;
   }
 }
@@ -237,8 +300,3 @@ function formatReviewIntoParagraphs(reviewText: string) {
     </>
   );
 }
-
-// Remove these lines that are causing the error:
-// // Replace your current pros/cons section with:
-// {/* Replace your current pros/cons section with the ProsConsBox component */}
-// <ProsConsBox pros={productData.pros || []} cons={productData.cons || []} />

@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 
-// Simple in-memory cache
-const cache: Record<string, { data: any, timestamp: number }> = {};
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutes in milliseconds
-
+// Remove unused cache variables
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
@@ -21,7 +18,14 @@ export async function GET(request: NextRequest) {
     }
 
     // For full search
-    const { db } = await connectToDatabase();
+        // Fix: Add null check for the database connection
+        const connection = await connectToDatabase();
+    
+        if (!connection || !connection.db) {
+          return NextResponse.json({ error: 'Database connection failed' }, { status: 500 });
+        }
+        
+        const { db } = connection;
     
     // Search for products
     const productResults = await db.collection('product_reviews')
@@ -63,7 +67,14 @@ export async function GET(request: NextRequest) {
 
 async function getSuggestions(query: string) {
   try {
-    const { db } = await connectToDatabase();
+        // Fix: Add null check for the database connection
+        const connection = await connectToDatabase();
+    
+        if (!connection || !connection.db) {
+          return NextResponse.json({ error: 'Database connection failed' }, { status: 500 });
+        }
+        
+        const { db } = connection;
     
     // Get product suggestions
     const productResults = await db.collection('product_reviews')
