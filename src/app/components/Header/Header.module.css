@@ -47,7 +47,7 @@
 
 .searchContainer input:focus {
   outline: none;
-  border-color: #000;
+  border-color: #fcfafa;
   background-color: white;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
