@@ -367,3 +367,78 @@
     gap: 0.5rem;
   }
 }
+
+/* Add responsive styles for review cards similar to product cards */
+@media (max-width: 1024px) {
+  /* Existing styles */
+  
+  .viewReview {
+    position: relative;
+    margin-top: 1rem;
+    display: inline-block;
+  }
+  
+  .reviewCard {
+    padding: 1.25rem;
+    gap: 1rem;
+  }
+  
+  .reviewImageContainer {
+    flex: 0 0 120px;
+  }
+  
+  .reviewImage {
+    max-height: 120px;
+  }
+  
+  .reviewContent {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Existing styles */
+  
+  .reviewCard {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 1rem;
+  }
+  
+  .reviewImageContainer {
+    flex: 0 0 auto;
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+  
+  .reviewContent {
+    width: 100%;
+    min-height: auto;
+  }
+  
+  .viewReview {
+    position: static;
+    margin-top: 1rem;
+    align-self: center;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Existing styles */
+  
+  .reviewImage {
+    max-height: 100px;
+  }
+  
+  .reviewSummary {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 1rem;
+  }
+}

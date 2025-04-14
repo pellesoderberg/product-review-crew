@@ -63,18 +63,17 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                 key={review._id.toString()}
                 className={styles.reviewCard}
               >
-                {/* Add image container for review cards */}
-                {review.featuredImage && (
-                  <div className={styles.reviewImageContainer}>
-                    <Image
-                      src={review.featuredImage || "/placeholder.jpg"}
-                      alt={review.reviewTitle}
-                      width={150}
-                      height={150}
-                      className={styles.reviewImage}
-                    />
-                  </div>
-                )}
+                {/* Always show image container with fallback */}
+                <div className={styles.reviewImageContainer}>
+                  <Image
+                    src={review.featuredImage || "/placeholder.jpg"}
+                    alt={review.reviewTitle}
+                    width={150}
+                    height={150}
+                    className={styles.reviewImage}
+                    unoptimized={true}
+                  />
+                </div>
                 <div className={styles.reviewContent}>
                   <h3 className={styles.reviewTitle}>{review.reviewTitle}</h3>
                   <p className={styles.reviewSummary}>
