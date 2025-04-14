@@ -1,13 +1,13 @@
 .container {
   max-width: 900px;
   margin: 0 auto;
-  padding: 2rem 1rem;
+  padding: 2rem 3rem; /* Increased horizontal padding */
   padding-top: 8rem;
 }
 
 .header {
-    margin-bottom: 1rem;
-  }
+  margin-bottom: 1rem;
+}
 
 .productTitle {
   font-size: 2rem;
@@ -54,7 +54,7 @@
 
 .buyButton {
   display: inline-block;
-  background-color: #1a1a4b;
+  background-color: #6D91B8;
   color: white;
   padding: 0.75rem 1.5rem;
   font-weight: 600;
@@ -66,7 +66,15 @@
 }
 
 .buyButton:hover {
-  background-color: #2a2a6a;
+  opacity: 0.9;
+}
+
+.resellerText {
+  font-size: 0.8rem;
+  color: #4a5568;
+  text-align: center;
+  margin-top: 0rem;
+  font-style: normal;
 }
 
 .productDescription {
@@ -80,7 +88,7 @@
 .shortSummary p {
   font-size: 1rem;
   line-height: 1.6;
-  color: #000000; /* Changed to black */
+  color: #000000;
   font-weight: 500;
 }
 
@@ -88,10 +96,10 @@
   display: flex;
   gap: 1.5rem;
   margin-bottom: 1.5rem;
-  justify-content: center; /* Center the pros/cons container */
-  max-width: 800px; /* Limit the width for better readability */
-  margin-left: auto; /* Center horizontally */
-  margin-right: auto; /* Center horizontally */
+  justify-content: center;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .prosConsColumn {
@@ -142,16 +150,15 @@
 
 .compareText {
   color: #4a5568;
-  font-style: italic; /* Added italic style */
+  font-style: italic;
 }
 
 .fullReviewLink {
   color: #1a365d;
   text-decoration: none;
   font-weight: 500;
-  font-style: italic; /* Added italic style */
+  font-style: italic;
   text-decoration: underline;
-
 }
 
 .fullReviewLink:hover {
@@ -173,7 +180,7 @@
 .reviewSection p {
   font-size: 1rem;
   line-height: 1.6;
-  color: #000000; /* Changed to black */
+  color: #000000;
 }
 
 .relatedReviews {
@@ -219,7 +226,31 @@
   background-color: #2c5282;
 }
 
+.reviewParagraph {
+  margin-bottom: 1.5rem;
+  font-size: 1rem;
+  line-height: 1.8;
+  color: #000000;
+}
+
+.reviewParagraph:last-child {
+  margin-bottom: 0;
+}
+
+/* Responsive styles with consistent margins */
+@media (max-width: 900px) {
+  .container {
+    padding: 2rem 3.5rem; /* Increased horizontal padding from 3rem to 3.5rem */
+    padding-top: 8rem;
+  }
+}
+
 @media (max-width: 768px) {
+  .container {
+    padding: 2rem 3rem; /* Increased horizontal padding from 2.5rem to 3rem */
+    padding-top: 7rem;
+  }
+  
   .productContent {
     flex-direction: column;
     align-items: center;
@@ -260,10 +291,22 @@
   }
 }
 
+@media (max-width: 600px) {
+  .container {
+    padding: 1.5rem 2.5rem; /* Increased horizontal padding from 2rem to 2.5rem */
+    padding-top: 6.5rem;
+  }
+  
+  .productTitle {
+    font-size: 1.6rem;
+    margin-bottom: 1.75rem;
+  }
+}
+
 @media (max-width: 480px) {
   .container {
-    padding: 1.5rem 0.75rem;
-    padding-top: 7rem;
+    padding: 1rem 2rem; /* Increased horizontal padding from 1.5rem to 2rem */
+    padding-top: 6rem;
   }
   
   .productImageContainer {
@@ -288,15 +331,4 @@
   .buyButton {
     padding: 0.6rem 1.2rem;
   }
-}
-
-.reviewParagraph {
-  margin-bottom: 1.5rem;
-  font-size: 1rem;
-  line-height: 1.8;
-  color: #000000; /* Changed to black */
-}
-
-.reviewParagraph:last-child {
-  margin-bottom: 0;
 }
