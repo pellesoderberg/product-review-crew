@@ -23,8 +23,10 @@ interface Product {
   cons?: string[];
   review?: string;
   reviewText?: string;
+  reseller?: string;
 }
 
+// First, update the Review interface to include metaTitle and metaDescription
 interface Review {
   _id: string | ObjectId;
   slug?: string;
@@ -34,6 +36,8 @@ interface Review {
   comparisonReview?: string;
   products?: Array<{ productId: string }>;
   createdAt?: Date;
+  metaTitle?: string; // Added for SEO
+  metaDescription?: string; // Added for SEO
 }
 
 // Update the params type to be a Promise only
@@ -99,7 +103,9 @@ async function getReviewData(id: string) {
       category: reviewDoc.category || 'Uncategorized',
       comparisonReview: reviewDoc.comparisonReview,
       products: reviewDoc.products,
-      createdAt: reviewDoc.createdAt
+      createdAt: reviewDoc.createdAt,
+      metaTitle: reviewDoc.metaTitle, // Added for SEO
+      metaDescription: reviewDoc.metaDescription // Added for SEO
     };
     
     // Fetch the products referenced in the review or directly from product_reviews
@@ -237,23 +243,12 @@ export default async function ReviewPage({ params }: ReviewPageParams) {
             >
               BUY NOW
             </a>
+            <span className={styles.resellerText}>
+              Trusted site: {product.reseller || 'Amazon.com'}
+            </span>
           </div>
         ))}
       </section>
-      
-      {/* Add comparison review section */}
-      {review.comparisonReview && (
-        <div className={styles.comparisonText}>
-          <h2 className={styles.sectionTitle}>Product-review-crew&apos;s comparison</h2>
-          {typeof review.comparisonReview === 'string' ? (
-            <div dangerouslySetInnerHTML={{ 
-              __html: formatReviewText(review.comparisonReview) 
-            }} />
-          ) : (
-            <div dangerouslySetInnerHTML={{ __html: review.comparisonReview }} />
-          )}
-        </div>
-      )}
       
       <section className={styles.detailedReview}>
         {products.map((product: Product, index: number) => (
@@ -285,6 +280,9 @@ export default async function ReviewPage({ params }: ReviewPageParams) {
                 >
                   BUY NOW
                 </a>
+                <span className={styles.resellerText}>
+                  Trusted site: {product.reseller || 'Amazon.com'}
+                </span>
               </div>
               
               {/* Product detail text section */}
@@ -454,6 +452,7 @@ async function getLatestReviews(excludeCategory: string, limit = 3): Promise<Rev
 }
 
 // Helper function to format review text with exactly three paragraphs
+/*
 function formatReviewText(text: string): string {
   // If text already has paragraph tags, return as is
   if (text.includes('<p>')) {
@@ -484,6 +483,7 @@ function formatReviewText(text: string): string {
   // Wrap in paragraph tags
   return `<p>${firstParagraph.trim()}</p><p>${secondParagraph.trim()}</p><p>${thirdParagraph.trim()}</p>`;
 }
+*/
 
 // Helper function to format product review text into two paragraphs
 function formatProductReviewText(text: string): string {
@@ -539,9 +539,10 @@ export async function generateStaticParams() {
 }
 
 // Update metadata function to use Promise type
+// Update the generateMetadata function to use metaTitle and metaDescription
 export async function generateMetadata({ params }: ReviewPageParams) {
   const resolvedParams = await params;
-  const data = await getReviewData(resolvedParams.slug); // Changed from id to slug
+  const data = await getReviewData(resolvedParams.slug);
 
   if (!data || 'redirect' in data) {
     return {
@@ -551,9 +552,24 @@ export async function generateMetadata({ params }: ReviewPageParams) {
   }
 
   const { review } = data;
+  
+  // Use metaTitle and metaDescription if available, otherwise fall back to defaults
+  const title = review.metaTitle || review.reviewTitle || 'Product Comparison Review';
+  const description = review.metaDescription || review.reviewSummary || 'Detailed comparison of top products';
 
   return {
-    title: review.reviewTitle || 'Product Comparison Review',
-    description: review.reviewSummary || 'Detailed comparison of top products',
+    title: title,
+    description: description,
+    openGraph: {
+      title: title,
+      description: description,
+      type: 'article',
+      url: `https://product-review-crew.com/review/${review.slug || review._id}`,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: title,
+      description: description,
+    }
   };
 }
