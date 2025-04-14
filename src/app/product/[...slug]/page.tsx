@@ -24,6 +24,7 @@ interface ProductData {
   cons?: string[];
   review?: string;
   fullReview?: string;
+  reseller?: string;
 }
 
 // Add this function to get the review slug for a product
@@ -182,6 +183,9 @@ export default async function ProductPage({
             <a href={product.affiliateLink || product.link || '#'} target="_blank" rel="noopener noreferrer" className={styles.buyButton}>
               BUY NOW
             </a>
+            <span className={styles.resellerText}>
+              Trusted site: {product.reseller || 'Amazon.com'}
+            </span>
           </div>
         </div>
         

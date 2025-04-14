@@ -1,7 +1,7 @@
 .container {
   max-width: 900px;
   margin: 0 auto;
-  padding: 2rem 1rem;
+  padding: 2rem 2rem;
   padding-top: 8rem;
 }
 
@@ -9,30 +9,32 @@
   margin-bottom: 3rem;
 }
 
+/* Consistent margins for title and summary */
 .reviewTitle {
   font-size: 2rem;
   font-weight: 700;
-  margin: 0 4rem 4rem 0rem;
+  margin: 0 0 2rem 0; /* Simplified margins */
   color: #000000;
 }
 
 .reviewSummary {
   font-size: 1.1rem;
   line-height: 1.6;
-  color: #000000; /* Changed to black */
+  color: #000000;
   max-width: 100%;
-  margin: 0 4rem 4rem 0rem;
-  font-weight: 500; /* Added light bold weight */
+  margin: 0 0 3rem 0; /* Simplified margins */
+  font-weight: 500;
 }
 
+/* Products grid with consistent margins */
 .productsGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1.5rem;
-  margin: 0 4rem 4rem 0rem;
-
+  margin: 0 0 3rem 0; /* Simplified margins */
 }
 
+/* Rest of product card styles */
 .productCard {
   background-color: #fff;
   border: 1px solid #e0e0e0;
@@ -44,54 +46,51 @@
   align-items: center;
   text-align: center;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  margin-top: 0; /* Remove margin that was for the banner */
-  overflow: hidden; /* Ensure the colored header stays within the card */
+  margin-top: 0;
+  overflow: hidden;
 }
 
-/* Update the award banner to be a colored header */
+/* Award banner styles */
 .awardBanner {
   position: static;
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  width: 15rem;
+  width: 100%; /* Full width for consistency */
   margin: 0;
   padding: 0.5rem 1rem;
-  color: #fff; /* White text */
-  /* Remove the !important to allow inline styles to override */
-  background-color: var(--button-color, #3a51c2); /* Use the same color as buy buttons */
+  color: #fff;
+  background-color: var(--button-color, #3a51c2);
   font-weight: 600;
   text-transform: uppercase;
   font-size: 0.9rem;
   text-align: center;
   clip-path: none;
   overflow: hidden;
-  border: none; /* Remove any border */
-  border-radius: 0; /* Changed from 'none' to '0' for proper CSS syntax */
-  box-sizing: border-box; /* Ensure padding is included in width calculation */
+  border: none;
+  border-radius: 0;
+  box-sizing: border-box;
 }
 
 .awardBanner span.number {
   font-size: 1.4rem;
   font-weight: 700;
   margin-right: 0.75rem;
-  max-width: calc(100% +25rem);
   flex-shrink: 0;
   min-width: 1rem;
 }
 
-/* Update the award text style */
 .awardBanner span:not(.number) {
-  /* Remove white-space: nowrap to allow wrapping */
   white-space: normal;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 100%;
-  font-size: 0.8rem; /* Reduced from 0.9rem to 0.8rem */
-  line-height: 1.3; /* Slightly reduced line height */
+  font-size: 0.8rem;
+  line-height: 1.3;
   letter-spacing: 0.02em;
 }
 
+/* Product image container */
 .productImageContainer {
   margin: 1.5rem 0 1rem;
   height: 180px;
@@ -116,11 +115,11 @@
 .productSummary {
   margin: 1rem 0;
   flex-grow: 1;
-  padding: 0 0.5rem;
+  padding: 0 1rem; /* Consistent padding */
   font-size: 0.9rem;
-
 }
 
+/* Buy button with consistent width */
 .buyButton {
   display: inline-block;
   color: white;
@@ -129,16 +128,17 @@
   text-decoration: none;
   border-radius: 0.25rem;
   text-align: center;
-  width: 70%; /* Changed from 100% to 80% to make it less wide */
+  width: 70%;
   transition: background-color 0.2s;
   text-transform: uppercase;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .buyButton:hover {
   opacity: 0.9;
 }
 
+/* Detailed review section */
 .detailedReview {
   margin-top: 4rem;
 }
@@ -146,32 +146,36 @@
 .productDetail {
   margin-bottom: 4rem;
   padding-bottom: 2rem;
-  border-bottom: 1px solid #eaeaea;
-  margin: 0 4rem 4rem 4rem;
-
-  
+  border-bottom: 1px solid #eaeaea;  
 }
 
 .productDetail:last-child {
   border-bottom: none;
 }
 
+/* Product detail title with improved rank alignment */
 .productDetailTitle {
-  font-size: 1.5rem; /* Changed from 1.8rem to make it smaller */
+  font-size: 1.5rem;
   font-weight: 700;
-  margin: 0 4rem 4rem 3rem;
+  margin-bottom: 2rem;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  position: relative;
+  padding-left: 3.5rem;
+  line-height: 1.3;
 }
 
-/* Add a new class for the rank number in the product detail title */
 .productRank {
-  font-size: 2rem; /* Bigger than the title text */
+  font-size: 2rem;
   font-weight: 800;
-  margin-right: 0.75rem;
   color: #000000;
+  position: absolute;
+  left: 0;
+  top: 0;
+  line-height: 1.3;
 }
 
+/* Product detail content grid */
 .productDetailContent {
   display: grid;
   grid-template-columns: 250px 1fr;
@@ -190,15 +194,14 @@
   margin: 1rem 0;
 }
 
-/* Add a specific class for product short summary */
+/* Product text content */
 .productShortSummary {
-  font-weight: 600; /* Make it bold */
+  font-weight: 500;
   color: #000000;
-  line-height: 1.8;
+  line-height: 1.6;
   margin-bottom: 1.5rem;
 }
 
-/* Keep the existing productDetailText as a container */
 .productDetailText {
   line-height: 1.8;
   text-align: left;
@@ -208,11 +211,11 @@
   overflow: visible;
 }
 
-/* Separate class for the actual review content */
 .productReviewContent {
-  margin-top: 1rem;
+  margin-top: 1.5rem;
   margin-bottom: 2rem;
   width: 100%;
+  clear: both;
 }
 
 .productReviewText {
@@ -222,44 +225,46 @@
   white-space: normal;
   overflow-wrap: break-word;
   word-wrap: break-word;
+  text-wrap: wrap;
+  width: 100%;
 }
 
 .productReviewText p {
   margin-bottom: 1.5rem;
+  text-indent: 0;
+  padding-left: 0;
+  margin-left: 0;
+  width: 100%;
 }
 
-.productReviewText {
-  display: block;
-  overflow-wrap: break-word;
-  word-wrap: break-word;
-  text-wrap: wrap;
+.productReviewText p:last-child {
+  margin-bottom: 0;
 }
 
+/* Features section */
 .productFeatures {
-  float: right;
-  width: auto;
-  min-width: 280px;
-  margin-left: 2rem;
-  margin-bottom: 1.5rem;
-  margin-top: 0;
-  margin-right: 0;
+  width: 100%;
+  margin: 0 0 1.5rem 0;
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
-  background-color: #fff;
-  border: 1px solid #e0e0e0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  padding: 1rem;
-  height: fit-content;
-  gap: 1.5rem;
-  position: relative;
-  z-index: 2;
+  justify-content: center;
+  background-color: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  gap: 2rem;
 }
 
 .featureSection {
-  flex: 0 0 auto;
+  flex: 1;
   margin-bottom: 0;
-  padding: 0;
+}
+
+.featureTitle {
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  font-size: 1rem;
+  display: none;
 }
 
 .prosList, .consList {
@@ -272,61 +277,21 @@
   margin-bottom: 0.5rem;
   display: flex;
   align-items: flex-start;
-  font-size: 0.8rem;
-  line-height: 1.2;
-  white-space: normal;
-  max-width: 150px;
-}
-
-.featureIcon {
-  display: inline-flex;
-  align-items: flex-start;
-  justify-content: center;
-  margin-right: 0.4rem;
-  font-weight: bold;
-  min-width: 12px;
-  font-size: 0.85rem;
-  flex-shrink: 0;
-  padding-top: 1px;
-}
-
-.proIcon {
-  color: #333;
-}
-
-.conIcon {
-  color: #333;
-}
-
-.featureSection {
-  margin-bottom: 1.5rem;
-}
-
-.featureTitle {
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  font-size: 1.1rem;
-}
-
-.prosList, .consList {
-  padding-left: 1.5rem;
-  margin-bottom: 1rem;
-}
-
-.prosList li, .consList li {
-  margin-bottom: 0.8rem;
-  display: flex;
-  align-items: flex-start;
   font-size: 0.9rem;
+  line-height: 1.4;
+  white-space: normal;
 }
 
 .featureIcon {
   display: inline-flex;
-  align-items: center;
   justify-content: center;
-  margin-right: 0.6rem;
+  align-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  margin-right: 0.5rem;
   font-weight: bold;
-  min-width: 16px;
+  min-width: 20px;
   font-size: 1rem;
 }
 
@@ -338,75 +303,21 @@
   color: #333;
 }
 
-.featureSection {
-  margin-bottom: 1.5rem;
+/* Section titles */
+.sectionTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 2rem 0 1.5rem;
+  text-transform: none;
+  color: #000000;
 }
 
-.featureTitle {
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  font-size: 1.1rem;
-}
-
-.prosList, .consList {
-  padding-left: 1.5rem;
-  margin-bottom: 1rem;
-}
-
-.prosList li, .consList li {
-  margin-bottom: 0.5rem;
-  display: flex;
-  align-items: flex-start;
-  font-size: 0.8rem;
-  line-height: 1.2;
-  white-space: normal;
-  max-width: 150px;
-}
-
-.featureIcon {
-  display: inline-flex;
-  align-items: flex-start;
-  justify-content: center;
-  margin-right: 0.4rem;
-  font-weight: bold;
-  min-width: 12px;
-  font-size: 0.85rem;
-  flex-shrink: 0;
-  padding-top: 1px;
-}
-
-.proIcon {
-  color: #333;
-}
-
-.conIcon {
-  color: #333;
-}
-
-.featureSection {
-  margin-bottom: 1.5rem;
-}
-
-.featureTitle {
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  font-size: 1.1rem;
-}
-
-.prosList, .consList {
-  padding-left: 1.5rem;
-  margin-bottom: 1rem;
-}
-
-.prosList li, .consList li {
-  margin-bottom: 0.5rem;
-}
-
+/* Comparison text */
 .comparisonText {
   margin: 2rem 0 4rem;
   line-height: 1.8;
   font-size: 1.05rem;
-  color: #000000; /* Changed to black */
+  color: #000000;
 }
 
 .comparisonText p {
@@ -414,25 +325,6 @@
   text-indent: 0;
   padding-left: 0;
   margin-left: 0;
-}
-
-.productReviewText p {
-  margin-bottom: 1.5rem;
-  text-indent: 0;
-  padding-left: 0;
-  margin-left: 0;
-}
-
-.productReviewText p:last-child {
-  margin-bottom: 0;
-}
-
-.sectionTitle {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin: 2rem 0 1.5rem;
-  text-transform: none; /* Changed from uppercase to none */
-  color: #000000;
 }
 
 .comparisonText ul, 
@@ -461,100 +353,14 @@
   text-decoration: none;
 }
 
-@media (max-width: 900px) {
-  .productsGrid {
-    grid-template-columns: repeat(1, 1fr);
-    margin: 0 4rem 4rem 0rem;
-    margin-left: 4rem;
-    margin-right: 4rem;
-  }
-  
-  .productDetailText {
-    grid-template-columns: 1fr;
-  }
-  .comparisonText {
-    margin: 2rem 4rem 4rem 4rem;
-  }
-  .reviewSummary {
-    margin: 2rem 4rem 4rem 4rem;
-
-  }
-}
-
-@media (max-width: 768px) {
-  .productDetailContent {
-    grid-template-columns: 1fr;
-  }
-  
-  .productDetailImage {
-    margin-bottom: 2rem;
-  }
-}
-
-@media (max-width: 600px) {
-  .productsGrid {
-    grid-template-columns: 1fr;
-    max-width: 400px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  
-  .reviewTitle {
-    font-size: 1.75rem;
-  }
-  
-  .productImageContainer {
-    height: 200px;
-  }
-  
-  .productCard {
-    max-width: 100%;
-  }
-}
-
-@media (max-width: 480px) {
-  .container {
-    padding: 1rem 0.5rem;
-    padding-top: 6rem;
-  }
-  
-  .productsGrid {
-    margin-top: 2.5rem;
-    margin-bottom: 2.5rem;
-  }
-  
-  .productImageContainer {
-    height: 180px;
-    margin: 1rem 0 0.75rem;
-  }
-  
-  .buyButton {
-    width: 85%;
-    padding: 0.6rem 1rem;
-    font-size: 0.9rem;
-  }
-  
-  .productSummary {
-    margin: 0 0.75rem 1rem;
-    font-size: 0.85rem;
-  }
-}
-
-
-/* Add these styles to your existing review.module.css file */
-
+/* Related reviews section */
 .relatedReviewsContainer {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 0rem;
+  gap: 2rem;
   margin-top: 4rem;
   padding-top: 2rem;
   border-top: 1px solid #e0e0e0;
-}
-
-@media (min-width: 768px) {
-  .relatedReviewsContainer {
-    grid-template-columns: 1fr 0.5fr;  }
 }
 
 .relatedReviewsTitle,
@@ -584,7 +390,7 @@
 
 .relatedReviewLink,
 .latestReviewLink {
-  color: #1a365d; /* Dark blue color to match the fullReviewLink */
+  color: #1a365d;
   text-decoration: none;
   font-weight: 500;
   transition: color 0.2s ease;
@@ -595,86 +401,23 @@
   text-decoration: underline;
 }
 
-/* Update the product short summary styling */
-.productShortSummary {
-  font-weight: 500; /* Changed from 600 to 500 for light bold */
-  margin-bottom: 1.5rem;
-  line-height: 1.6;
-  color: #000000;
-}
-
-/* Update the product features styling */
-.productFeatures {
-  float: none;
-  width: 100%;
-  min-width: auto;
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 1.5rem;
-  display: flex;
-  flex-direction: row;
-  justify-content: center; /* Center the pros/cons box */
-  background-color: transparent;
-  border: none;
-  box-shadow: none;
-  padding: 0;
-  gap: 2rem;
-}
-
-.featureSection {
-  flex: 1;
-  margin-bottom: 0;
-}
-
-.featureTitle {
-  font-weight: 600;
-  margin-bottom: 0.75rem;
-  font-size: 1rem;
-  display: none; /* Hide the title as in the image */
-}
-
-.featureIcon {
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  margin-right: 0.5rem;
-  font-weight: bold;
-  min-width: 20px;
-  font-size: 1rem;
-}
-
-/* Style for the review content */
-.productReviewContent {
-  margin-top: 1.5rem;
-  clear: both;
-  width: 100%; /* Ensure full width */
-}
-
-.productReviewText {
-  display: block;
-  overflow-wrap: break-word;
-  word-wrap: break-word;
-  text-wrap: wrap;
-  width: 100%; /* Ensure full width */
-}
-
-.productReviewText p {
+/* Reseller text */
+.resellerText {
+  font-size: 0.8rem;
+  color: #4a5568;
+  text-align: center;
+  margin-top: 0.5rem;
   margin-bottom: 1rem;
-  line-height: 1.6;
-  width: 100%; /* Ensure full width */
+  font-style: normal;
 }
 
-
-/* Add these styles to your existing CSS file */
+/* Award text */
 .awardText {
   font-size: 0.85rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: calc(100% - 30px); /* Adjust based on the number width */
+  max-width: calc(100% - 30px);
   display: inline-block;
   vertical-align: middle;
 }
@@ -684,4 +427,109 @@
   font-weight: bold;
   min-width: 20px;
   text-align: center;
+}
+
+/* Responsive styles */
+@media (min-width: 768px) {
+  .relatedReviewsContainer {
+    grid-template-columns: 1fr 0.5fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .container {
+    padding: 2rem 3rem; /* Increased horizontal padding */
+    padding-top: 8rem;
+  }
+  
+  .productsGrid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Changed to auto-fill with larger minimum width */
+    gap: 2rem; /* Increased gap between items */
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 2rem 2.5rem; /* Slightly reduced padding from previous breakpoint */
+    padding-top: 7rem;
+  }
+  
+  .productDetailContent {
+    grid-template-columns: 1fr;
+  }
+  
+  .productDetailImage {
+    margin-bottom: 2rem;
+  }
+  
+  .productsGrid {
+    grid-template-columns: 1fr; /* Force single column at this breakpoint */
+    max-width: 500px; /* Increased max-width for better appearance */
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding: 1.5rem 2rem; /* Increased horizontal padding */
+    padding-top: 6.5rem;
+  }
+  
+  .productsGrid {
+    grid-template-columns: 1fr; /* Single column for smallest screens */
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+    gap: 1.5rem;
+  }
+  
+  .reviewTitle {
+    font-size: 1.75rem;
+  }
+  
+  .productImageContainer {
+    height: 200px;
+  }
+  
+  .productCard {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 1rem 1.5rem; /* Increased horizontal padding */
+    padding-top: 6rem;
+  }
+  
+  .reviewTitle {
+    font-size: 1.5rem;
+  }
+  
+  .productsGrid {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+  }
+  
+  .productImageContainer {
+    height: 180px;
+    margin: 1rem 0 0.75rem;
+  }
+  
+  .buyButton {
+    width: 85%;
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .productSummary {
+    margin: 0 0.75rem 1rem;
+    font-size: 0.85rem;
+  }
+  
+  .resellerText {
+    font-size: 0.75rem;
+    margin-top: -0.25rem;
+  }
 }
