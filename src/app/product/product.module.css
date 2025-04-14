@@ -54,7 +54,7 @@
 
 .buyButton {
   display: inline-block;
-  background-color: #1a1a4b;
+  background-color: #6D91B8;
   color: white;
   padding: 0.75rem 1.5rem;
   font-weight: 600;
@@ -66,7 +66,7 @@
 }
 
 .buyButton:hover {
-  background-color: #2a2a6a;
+  opacity: 0.9;
 }
 
 .resellerText {

@@ -201,7 +201,7 @@ export default async function ReviewPage({ params }: ReviewPageParams) {
   const latestReviews = await getLatestReviews(review.category);
   
   // Define banner colors for the top 3 products
-  const bannerColors = ["#1e4620", "#1a1a4b", "#5c5c1e"];
+  const bannerColors = ["#6D91B8", "#7BB662", "#b7c256"];
   
   return (
     <div className={styles.container}>
