@@ -14,6 +14,7 @@ const nextConfig = {
       'www.goodhousekeeping.com',
       'www.amazon.com',
       'www.oribe.com',
+      'media.us.lg.com',
       // Add any other domains you need to load images from
     ],
   },
