@@ -116,15 +116,13 @@
 
 @media (max-width: 768px) {
   .searchInput {
-    font-size: 0.75rem;
-    padding: 0.5rem 2.5rem 0.5rem 1rem;
-    border-radius: 20px;
-    background-color: #f5f5f5;
-    border: none;
+    font-size: 16px; /* Increased font size to prevent zoom on mobile */
+    padding: 0.35rem 0.7rem 0.35rem 2rem;
+    -webkit-appearance: none; /* Prevents iOS styling */
   }
   
   .searchButton {
-    right: 10px;
+    left: 6px;
   }
   
   .searchContainer {
@@ -133,13 +131,20 @@
     max-width: 400px;
   }
   
-  .searchForm {
-    margin: 0 auto;
-  }
-  
   .suggestions {
     width: 100%;
     border-radius: 10px;
     margin-top: 5px;
+  }
+}
+
+@media (max-width: 480px) {
+  .searchInput {
+    font-size: 16px; /* Minimum font size to prevent zoom on iOS */
+    padding: 0.5rem 0.7rem 0.5rem 2rem;
+    border-radius: 20px;
+    background-color: #f5f5f5;
+    border: none;
+    -webkit-appearance: none;
   }
 }
