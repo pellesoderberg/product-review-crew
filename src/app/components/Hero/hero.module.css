@@ -118,18 +118,28 @@
 /* Tablet styles */
 @media (max-width: 1024px) {
   .heroSection {
-    flex-direction: column;
-    text-align: center;
-    padding: 1.5rem 1rem;
-    height: auto;
-    min-height: auto;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 80px 40px;
+    min-height: calc(100vh - 70px);
+    height: calc(100vh - 70px);
+    background-color: white;
+    width: 100%;
+    overflow: hidden;
+    padding-top: 8rem;
+    margin-bottom: 2rem;
   }
   
   .heroContent {
-    width: 70%;
-    padding-right: 0;
-    margin-left: 0;
-    margin-bottom: 2rem;
+    width: 60%;
+    padding-right: 1rem;
+    margin-left: 1rem;
+    margin-top: 3rem;
+    align-self: flex-start;
+    margin-top: 3rem;
+
   }
   
   .heroTitle {
@@ -137,39 +147,59 @@
   }
   
   .heroText {
-    margin: 0 auto 2rem;
+    margin: 0 0 2rem 0;
     max-width: 100%;
   }
   
   .heroImage {
-    width: 40%;
-    max-width: 40%;
-    margin: 0 auto 2rem;
+    width: 35%;
+    max-width: 35%;
+    margin: 0;
+    margin-top: 0rem;
+    align-self: center;
+  }
+  
+  .heroImage img {
+    max-height: 300px;
   }
 }
 
 /* Mobile styles */
 @media (max-width: 768px) {
   .heroSection {
-    padding: 40px 20px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 80px 40px;
+    min-height: calc(100vh - 70px);
+    height: calc(100vh - 70px);
+    background-color: white;
+    width: 100%;
+    overflow: hidden;
+    padding-top: 8rem;
+    margin-bottom: 2rem;
   }
   
   .heroContent {
-    width: 70%;
+    width: 90%;
     padding-right: 0;
     padding-top: 40px;
     margin-left: 0;
     margin-bottom: 2rem;
+    text-align: left;
   }
   
   .heroTitle {
     font-size: 2rem;
     order: 1;
+    text-align: left;
   }
   
   .heroText {
     order: 2;
     font-size: 0.95rem;
+    text-align: left;
   }
   
   .heroImage {
@@ -177,6 +207,7 @@
     width: 40%;
     max-width: 40%;
     margin: 1.5rem auto;
+    align-self: center;
   }
   
   .heroButton {
@@ -187,7 +218,18 @@
 /* Small mobile styles */
 @media (max-width: 480px) {
   .heroSection {
-    padding: 1rem 0.5rem;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 80px 40px;
+    min-height: calc(100vh - 70px);
+    height: calc(100vh - 70px);
+    background-color: white;
+    width: 100%;
+    overflow: hidden;
+    padding-top: 6rem;
+    margin-bottom: 2rem;
   }
   
   .heroTitle {
@@ -195,9 +237,7 @@
   }
   
   .heroImage {
-    width: 40%;
-    max-width: 40%;
-    margin: 1rem auto;
+    display: none;
   }
   
   .heroText {
