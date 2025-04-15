@@ -63,11 +63,12 @@
   background-color: white;
   border: 0px solid #000;
   border-top: none;
-  border-radius: 0;
-  max-height:200px;
+  border-radius: 0 0 20px 20px;
+  max-height: 200px;
   overflow-y: auto;
   z-index: 10;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-top: 5px;
 }
 
 .suggestionItem {
@@ -79,27 +80,12 @@
   text-decoration: none;
   border-bottom: 1px solid #eee;
   font-size: 0.89rem;
-  cursor: pointer; /* 👈 Add this line */
-
-}
-
-.suggestionType {
-  font-size: 0.6rem;
-  color: #666;
-  text-transform: uppercase;
-  background-color: #f0f0f0;
-  padding: 0.15rem 0.4rem;
-  border-radius: 2px;
-  min-width: 50px;
-  text-align: center;
+  cursor: pointer;
 }
 
 .suggestionItem:last-child {
   border-bottom: none;
-}
-
-.suggestionItem:hover {
-  background-color: #f5f5f5;
+  border-radius: 0 0 20px 20px;
 }
 
 /* Add responsive styles */
@@ -133,7 +119,7 @@
   
   .suggestions {
     width: 100%;
-    border-radius: 10px;
+    border-radius: 20px;
     margin-top: 5px;
   }
 }
@@ -146,5 +132,25 @@
     background-color: #f5f5f5;
     border: none;
     -webkit-appearance: none;
+  }
+  
+  .suggestions {
+    border-radius: 20px;
+    margin-top: 30px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    background-color: white;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+  }
+  
+  .suggestionItem:last-child {
+    border-radius: 0 0 20px 20px;
+  }
+  
+  .suggestionItem:first-child {
+    border-radius: 20px 20px 0 0;
+  }
+  
+  .suggestionItem:only-child {
+    border-radius: 20px;
   }
 }
