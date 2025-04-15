@@ -99,6 +99,7 @@ export default function SearchBar() {
           _id: string | { $oid: string };
           reviewTitle?: string;
           title?: string;
+          slug?: string; // Add slug property to the interface
         }
         
         // Format reviews with proper typing
@@ -107,7 +108,8 @@ export default function SearchBar() {
             ? item._id.$oid 
             : item._id,
           title: item.reviewTitle || item.title,
-          type: 'review' as const
+          type: 'review' as const,
+          slug: item.slug || '' // Add slug property for reviews
         }));
         
         // Format products
@@ -205,16 +207,17 @@ export default function SearchBar() {
                   setQuery(''); // Clear the search text when clicking a suggestion
                   
                   // Handle different types of suggestions
-                  // Update the product suggestion click handler in SearchBar.tsx
                   if (item.type === 'product') {
-                  // Use slug and award for SEO-friendly URL
-                  const award = item.award || 'details';
-                  const seoAward = award.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-                  console.log("Navigating to product with award:", award, "SEO award:", seoAward);
-                  router.push(`/product/${item.slug}/${seoAward}`);
+                    // Use slug and award for SEO-friendly URL
+                    const award = item.award || 'details';
+                    const seoAward = award.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+                    console.log("Navigating to product with award:", award, "SEO award:", seoAward);
+                    router.push(`/product/${item.slug}/${seoAward}`);
                   } else {
-                  // For reviews, navigate directly to the review page
-                  router.push(`/review/${item._id}`);
+                    // For reviews, navigate using slug for SEO-friendly URL
+                    // If slug is not available, fall back to ID
+                    const reviewPath = item.slug || item._id;
+                    router.push(`/review/${reviewPath}`);
                   }
                 }}
               >
