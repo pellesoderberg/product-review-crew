@@ -106,11 +106,10 @@
   height: 100%;
   display: flex;
   margin-bottom: 2rem;
-  flex-direction: column;
+  flex-direction: row; /* Changed from column to row */
   text-decoration: none;
   color: inherit;
-  position: relative;
-  min-height: 200px;
+  gap: 1.5rem; /* Add gap between image and content */
 }
 
 .productCard {
@@ -135,12 +134,34 @@
   justify-content: center;
 }
 
+.reviewImageContainer {
+  flex: 0 0 150px; /* Fixed width for image container */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.reviewImage {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+  max-height: 150px;
+}
+
+.reviewContent {
+  flex: 1; /* Take remaining space */
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  min-height: 150px; /* Ensure minimum height for content */
+}
+
 .viewReview {
   color: #2c5282;
   font-weight: 600;
   position: absolute;
-  bottom: 1.5rem;
-  left: 1.5rem;
+  bottom: 0;
+  left: 0;
 }
 
 .productImage {
@@ -344,5 +365,80 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
+  }
+}
+
+/* Add responsive styles for review cards similar to product cards */
+@media (max-width: 1024px) {
+  /* Existing styles */
+  
+  .viewReview {
+    position: relative;
+    margin-top: 1rem;
+    display: inline-block;
+  }
+  
+  .reviewCard {
+    padding: 1.25rem;
+    gap: 1rem;
+  }
+  
+  .reviewImageContainer {
+    flex: 0 0 120px;
+  }
+  
+  .reviewImage {
+    max-height: 120px;
+  }
+  
+  .reviewContent {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Existing styles */
+  
+  .reviewCard {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 1rem;
+  }
+  
+  .reviewImageContainer {
+    flex: 0 0 auto;
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+  
+  .reviewContent {
+    width: 100%;
+    min-height: auto;
+  }
+  
+  .viewReview {
+    position: static;
+    margin-top: 1rem;
+    align-self: center;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Existing styles */
+  
+  .reviewImage {
+    max-height: 100px;
+  }
+  
+  .reviewSummary {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 1rem;
   }
 }

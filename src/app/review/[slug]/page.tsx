@@ -133,7 +133,8 @@ async function getReviewData(id: string) {
         pros: doc.pros,
         cons: doc.cons,
         review: doc.review,
-        reviewText: doc.reviewText
+        reviewText: doc.reviewText,
+        reseller: doc.reseller // Added reseller field
       }));
     } else {
       // If no products array in review, try to find products by category
@@ -158,7 +159,8 @@ async function getReviewData(id: string) {
         pros: doc.pros,
         cons: doc.cons,
         review: doc.review,
-        reviewText: doc.reviewText
+        reviewText: doc.reviewText,
+        reseller: doc.reseller // Added reseller field
       }));
     }
     
@@ -250,6 +252,16 @@ export default async function ReviewPage({ params }: ReviewPageParams) {
         ))}
       </section>
       
+      {/* Add comparison review content */}
+      {review.comparisonReview && (
+        <section className={styles.comparisonText}>
+          <h2 className={styles.comparisonTextTitle}>Product-Review-Crew&apos;s Comparison</h2>
+          <div dangerouslySetInnerHTML={{ 
+            __html: formatComparisonReviewText(review.comparisonReview) 
+          }} />
+        </section>
+      )}
+      
       <section className={styles.detailedReview}>
         {products.map((product: Product, index: number) => (
           <div 
@@ -310,6 +322,14 @@ export default async function ReviewPage({ params }: ReviewPageParams) {
           </div>
         ))}
       </section>
+      
+      {/* Display review creation date */}
+      {review.createdAt && (
+        <div className={styles.reviewCreatedAt}>
+         created at {new Date(review.createdAt).toISOString().split('T')[0]}
+
+        </div>
+      )}
       
       {/* New section for related and latest reviews */}
       <div className={styles.relatedReviewsContainer}>
@@ -451,9 +471,8 @@ async function getLatestReviews(excludeCategory: string, limit = 3): Promise<Rev
   }
 }
 
-// Helper function to format review text with exactly three paragraphs
-/*
-function formatReviewText(text: string): string {
+// Helper function to format comparison review text into two paragraphs
+function formatComparisonReviewText(text: string): string {
   // If text already has paragraph tags, return as is
   if (text.includes('<p>')) {
     return text;
@@ -462,28 +481,22 @@ function formatReviewText(text: string): string {
   // Remove any existing HTML tags for safety
   const cleanText = text.replace(/<[^>]*>/g, '');
   
-  // Split the text into roughly three equal parts
+  // Split the text into two roughly equal parts
   const totalLength = cleanText.length;
-  const partLength = Math.floor(totalLength / 3);
+  const halfLength = Math.floor(totalLength / 2);
   
-  // Find sentence boundaries near the split points
-  let firstBreak = cleanText.indexOf('. ', partLength);
-  if (firstBreak === -1) firstBreak = partLength;
-  else firstBreak += 2; // Include the period and space
+  // Find sentence boundary near the middle
+  let breakPoint = cleanText.indexOf('. ', halfLength);
+  if (breakPoint === -1) breakPoint = halfLength;
+  else breakPoint += 2; // Include the period and space
   
-  let secondBreak = cleanText.indexOf('. ', partLength * 2);
-  if (secondBreak === -1) secondBreak = partLength * 2;
-  else secondBreak += 2; // Include the period and space
-  
-  // Create the three paragraphs
-  const firstParagraph = cleanText.substring(0, firstBreak);
-  const secondParagraph = cleanText.substring(firstBreak, secondBreak);
-  const thirdParagraph = cleanText.substring(secondBreak);
+  // Create the two paragraphs
+  const firstParagraph = cleanText.substring(0, breakPoint);
+  const secondParagraph = cleanText.substring(breakPoint);
   
   // Wrap in paragraph tags
-  return `<p>${firstParagraph.trim()}</p><p>${secondParagraph.trim()}</p><p>${thirdParagraph.trim()}</p>`;
+  return `<p>${firstParagraph.trim()}</p><p>${secondParagraph.trim()}</p>`;
 }
-*/
 
 // Helper function to format product review text into two paragraphs
 function formatProductReviewText(text: string): string {

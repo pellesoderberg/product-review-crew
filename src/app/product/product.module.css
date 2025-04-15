@@ -47,9 +47,9 @@
 }
 
 .price {
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   font-weight: 700;
-  color: #1a202c;
+  color:#3d3c3c
 }
 
 .buyButton {
@@ -331,4 +331,11 @@
   .buyButton {
     padding: 0.6rem 1.2rem;
   }
+}
+
+.reviewCreatedAt {
+  font-size: 0.8rem;
+  color: #515458;
+  text-align: left;
+  padding-bottom: 0rem;
 }

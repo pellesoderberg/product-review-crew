@@ -25,6 +25,7 @@ interface ProductData {
   review?: string;
   fullReview?: string;
   reseller?: string;
+  createdAt?: string | Date; // Add createdAt field
 }
 
 // Add this function to get the review slug for a product
@@ -215,6 +216,13 @@ export default async function ProductPage({
             )}
           </div>
           
+          {/* Add review creation date */}
+          {product.createdAt && (
+            <div className={styles.reviewCreatedAt}>
+              Review created at {new Date(product.createdAt).toISOString().split('T')[0]}
+            </div>
+          )}
+          
           {/* Add the related reviews component */}
           {product.category && (
             <RelatedReviews category={product.category} />
@@ -273,7 +281,9 @@ async function getProductBySlug(slug: string): Promise<ProductData | null> {
       pros: product.pros,
       cons: product.cons,
       review: product.review,
-      fullReview: product.fullReview
+      fullReview: product.fullReview,
+      reseller: product.reseller,
+      createdAt: product.createdAt // Include createdAt field
     };
   } catch (error) {
     console.error('Error fetching product by slug:', error);
