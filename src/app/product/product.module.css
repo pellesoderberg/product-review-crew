@@ -306,7 +306,7 @@
 @media (max-width: 480px) {
   .container {
     padding: 1rem 2rem; /* Increased horizontal padding from 1.5rem to 2rem */
-    padding-top: 6rem;
+    padding-top: 8rem;
   }
   
   .productImageContainer {
