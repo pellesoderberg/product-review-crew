@@ -153,20 +153,33 @@
   }
   
   .container {
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    justify-content: space-between;
   }
   
   .logo {
     font-size: 1.2rem;
+    flex-shrink: 0;
+    margin-right: 2rem; /* Increased padding between logo and search bar */
   }
   
   .searchContainer {
-    width: 300px;
-    margin-right: 0;
+    width: 60%;
+    margin: 0;
+    flex-grow: 1;
+  }
+  
+  .rightContainer {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    justify-content: space-between;
   }
   
   .menuButton {
     display: block;
+    flex-shrink: 0;
+    margin-left: 2rem; /* Increased padding between search bar and hamburger */
   }
   
   .nav {
@@ -215,34 +228,58 @@
     padding: 0.5rem 1rem;
   }
   
+  .container {
+    flex-direction: row;
+    align-items: center;
+  }
+  
   .searchContainer {
-    width: 100%;
+    width: 50%;
     margin: 0;
   }
   
-  .rightContainer {
-    width: 100%;
-    justify-content: space-between;
-    margin-top: 0.5rem;
-  }
-  
-  .container {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  
   .logo {
-    margin-bottom: 0.5rem;
+    margin-bottom: 0;
+    font-size: 0.8rem;
+    margin-right: 2rem; /* Further increased padding on mobile */
+  }
+
+  .searchContainer input {
+    font-size: 0.7rem;
+  }
+  
+  .menuButton {
+    margin-left: 2rem; /* Further increased padding on mobile */
   }
 }
 
 /* For very small screens */
 @media (max-width: 480px) {
+   .header {
+    padding: 0.75rem 1rem;
+  }
   .nav {
     width: 80%;
   }
   
   .navLink {
     font-size: 1rem;
+  }
+  
+  .searchContainer {
+    width: 40%;
+  }
+
+  .searchContainer input {
+    font-size: 0.48rem;
+  }
+  
+  .searchContainer button {
+    right: 5px;
+    transform: translateY(-50%) scale(0.75);
+  }
+
+  .logo {
+    display: none;
   }
 }
