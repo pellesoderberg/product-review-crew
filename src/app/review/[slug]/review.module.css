@@ -521,7 +521,7 @@
 @media (max-width: 480px) {
   .container {
     padding: 1rem 1.5rem; /* Increased horizontal padding */
-    padding-top: 6rem;
+    padding-top: 8rem;
   }
   
   .reviewTitle {

@@ -427,7 +427,10 @@
 }
 
 @media (max-width: 480px) {
-  /* Existing styles */
+  .container {
+    padding: 1rem 1.5rem; /* Increased horizontal padding */
+    padding-top: 8rem;
+  }
   
   .reviewImage {
     max-height: 100px;
