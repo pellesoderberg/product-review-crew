@@ -255,9 +255,22 @@
 
 /* For very small screens */
 @media (max-width: 480px) {
-   .header {
+  .header {
     padding: 0.75rem 1rem;
   }
+  
+  .container {
+    flex-direction: column;
+    align-items: center;
+    padding: 0;
+  }
+  
+  .rightContainer {
+    width: 100%;
+    justify-content: center;
+    margin-top: 0.5rem;
+  }
+  
   .nav {
     width: 80%;
   }
@@ -267,19 +280,38 @@
   }
   
   .searchContainer {
-    width: 40%;
+    width: 100%;
+    margin: 0 auto;
   }
 
   .searchContainer input {
-    font-size: 0.48rem;
+    font-size: 0.75rem;
+    padding: 0.5rem 2.5rem 0.5rem 1rem;
+    border-radius: 20px;
+    background-color: #f5f5f5;
+    border: none;
   }
   
   .searchContainer button {
-    right: 5px;
-    transform: translateY(-50%) scale(0.75);
+    right: 10px;
+    transform: translateY(-50%) scale(0.9);
   }
 
   .logo {
-    display: none;
+    display: block;
+    font-size: 0.8rem;
+    margin-bottom: 0.75rem;
+    margin-right: 0;
+    text-align: left;
+    width: 100%;
+    position: relative;
+    padding-left: 1rem;
+  }
+  
+  .menuButton {
+    position: absolute;
+    top: 6%;
+    right: 2.5rem;
+    margin-left: 0;
   }
 }

@@ -117,10 +117,29 @@
 @media (max-width: 768px) {
   .searchInput {
     font-size: 0.75rem;
-    padding: 0.35rem 1.8rem 0.35rem 0.7rem;
+    padding: 0.5rem 2.5rem 0.5rem 1rem;
+    border-radius: 20px;
+    background-color: #f5f5f5;
+    border: none;
   }
   
   .searchButton {
-    right: 6px;
+    right: 10px;
+  }
+  
+  .searchContainer {
+    margin: 0;
+    width: 90%;
+    max-width: 400px;
+  }
+  
+  .searchForm {
+    margin: 0 auto;
+  }
+  
+  .suggestions {
+    width: 100%;
+    border-radius: 10px;
+    margin-top: 5px;
   }
 }
